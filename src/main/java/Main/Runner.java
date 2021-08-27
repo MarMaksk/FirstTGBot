@@ -11,7 +11,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import Main.state.BotState;
 import Main.state.MessageType;
-import user.TelegramUser;
+import Main.user.TelegramUser;
 
 import java.util.List;
 import java.util.logging.Logger;

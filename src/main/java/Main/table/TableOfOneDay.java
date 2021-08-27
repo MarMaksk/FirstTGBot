@@ -1,6 +1,6 @@
 package Main.table;
 
-import user.TelegramUser;
+import Main.user.TelegramUser;
 import Main.service.ServiceForDay;
 import Main.state.BotState;
 import com.pengrad.telegrambot.TelegramBot;

@@ -1,7 +1,7 @@
 package Main.table;
 
 
-import user.TelegramUser;
+import Main.user.TelegramUser;
 import Main.config.Config;
 import Main.state.DayState;
 import org.jetbrains.annotations.Nullable;

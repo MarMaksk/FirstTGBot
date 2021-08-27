@@ -1,4 +1,4 @@
-package user;
+package Main.user;
 
 import Main.state.BotState;
 import Main.state.DayState;

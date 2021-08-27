@@ -1,4 +1,4 @@
-package user;
+package Main.user;
 
 public class UserProfileData {
     String name;
