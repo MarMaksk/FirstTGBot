@@ -5,6 +5,7 @@ import Main.state.BotState;
 import Main.state.DayState;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -12,9 +13,16 @@ import com.pengrad.telegrambot.request.SendMessage;
 public class ServiceForDay implements Service {
     public static void selectionDay(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY) {
+            KeyboardButton[] kb = new KeyboardButton[10];
+            for (int i = 0; i < 10; i++) {
+                kb[i] = new KeyboardButton("TEST");
+            }
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("Понедельник", "Вторник")
                     .addRow("Среда", "Четверг").addRow("Пятница", "Суббота").addRow("Воскресенье", "Завершить")
                     .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
+            for (int i = 0; i < 10; i++){
+                replyKeyboardMarkup.addRow(kb[i]);
+            }
             bot.execute(new SendMessage(idMessage, "Какой день недели будем заполнять?").replyMarkup(replyKeyboardMarkup));
         }
     }
