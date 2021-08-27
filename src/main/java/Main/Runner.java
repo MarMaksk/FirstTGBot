@@ -65,6 +65,8 @@ public class Runner {
                                         return;
                                     case CHANGE:
                                         return;
+                                    case CHOICE:
+                                        return;
                                     case MESSAGE:
                                         // TODO: 27.08.2021  
                                         TableOfOneDay.addTimetableName(update, idUserMessage, user, bot);
@@ -94,6 +96,10 @@ public class Runner {
         });
     }
 
+    public void activeTimetable() {
+
+    }
+
 
     private void invokeChatMember(Update update) {
         bot.execute(new SendMessage(update.message().chat().id(), "Когда-то когда человечество от  ̶g̶̶̶a̶̶̶r̶̶̶b̶̶̶a̶̶̶g̶̶̶e̶̶̶ ̶̶̶c̶̶̶o̶̶̶l̶̶̶l̶̶̶e̶̶̶c̶̶̶t̶̶̶o̶̶̶r̶̶̶ ̶̶̶б̶̶̶ы̶̶̶л̶̶̶о̶̶̶ ̶̶̶с̶̶̶п̶̶̶а̶̶̶с̶̶̶е̶̶̶н̶̶̶о̶̶̶ ̶̶̶п̶̶̶е̶̶̶р̶̶̶е̶̶̶о̶̶̶п̶̶̶р̶̶̶е̶̶̶д̶̶̶е̶̶̶л̶̶̶ё̶̶̶н̶̶̶н̶̶̶ы̶̶̶м̶̶̶ ̶̶̶м̶̶̶е̶̶̶т̶̶̶о̶̶̶д̶̶̶о̶̶̶м̶̶̶ ̶̶̶f̶̶̶i̶̶̶n̶̶̶a̶̶̶l̶̶̶i̶̶̶z̶̶̶e̶̶ " +
@@ -118,6 +124,7 @@ public class Runner {
         if (update.message() != null && text.equals("/aweek")) return MessageType.AWEEK;
         if (update.message() != null && text.equals("/add")) return MessageType.ADD;
         if (update.message() != null && text.equals("/change")) return MessageType.CHANGE;
+        if (update.message() != null && text.equals("/choice")) return MessageType.CHOICE;
         if (update.message() != null) return MessageType.MESSAGE;
         if (update.myChatMember() != null) return MessageType.CHAT_MEMBER;
         if (update.callbackQuery() != null) return MessageType.CALLBACK_QUERY;

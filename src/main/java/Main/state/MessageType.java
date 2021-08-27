@@ -15,6 +15,7 @@ public enum MessageType {
     AWEEK,
     ADD,
     CHANGE,
+    CHOICE,
     END,
     INTEGER
 
