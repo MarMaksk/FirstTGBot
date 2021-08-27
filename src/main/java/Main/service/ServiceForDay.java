@@ -9,7 +9,7 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 
-public class ServiceForDay {
+public class ServiceForDay implements Service {
     public static void selectionDay(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY) {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("Понедельник", "Вторник")

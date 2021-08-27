@@ -11,7 +11,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServicePreparationForSQL {
+public class ServicePreparationForSQL implements Service {
     private static Map<Long, Integer> couplesPerDay = new HashMap<>();
 
     public static void preparationForWriting(Update update, Long idUserMessage, TelegramUser user, TelegramBot bot) {
