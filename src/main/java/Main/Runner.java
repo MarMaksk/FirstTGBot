@@ -31,6 +31,7 @@ public class Runner {
             public int process(List<Update> lst) {
                 lst.forEach(update -> {
                             new Thread(() -> {
+
                                 BotState stateUserCallbackQuery = null;
                                 BotState stateUserMessage = null;
                                 Long idUserCallbackQuery = null;
