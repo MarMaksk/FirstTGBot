@@ -13,16 +13,9 @@ import com.pengrad.telegrambot.request.SendMessage;
 public class ServiceForDay implements Service {
     public static void selectionDay(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY) {
-            KeyboardButton[] kb = new KeyboardButton[10];
-            for (int i = 0; i < 10; i++) {
-                kb[i] = new KeyboardButton("TEST");
-            }
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("Понедельник", "Вторник")
                     .addRow("Среда", "Четверг").addRow("Пятница", "Суббота").addRow("Воскресенье", "Завершить")
                     .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
-            for (int i = 0; i < 10; i++){
-                replyKeyboardMarkup.addRow(kb[i]);
-            }
             bot.execute(new SendMessage(idMessage, "Какой день недели будем заполнять?").replyMarkup(replyKeyboardMarkup));
         }
     }

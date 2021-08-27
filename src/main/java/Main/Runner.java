@@ -8,6 +8,8 @@ import Main.table.TableOfOneDay;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import Main.state.BotState;
 import Main.state.MessageType;
@@ -96,8 +98,20 @@ public class Runner {
         });
     }
 
-    public void activeTimetable() {
+    public void buttonChoice(Update update, List<String> listTableName) {
+        //TODO полученние названий из SQL
+        KeyboardButton[] keyboardButtons = new KeyboardButton[listTableName.size()];
+        for (int i = 0; i < keyboardButtons.length; i++) {
+            keyboardButtons[i] = new KeyboardButton(listTableName.get(i));
+        }
+        ReplyKeyboardMarkup replyKeyboardMarkup = null;
+        for (KeyboardButton kb : keyboardButtons) {
+            replyKeyboardMarkup.addRow(kb);
+        }
+        replyKeyboardMarkup.resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
+        bot.execute(new SendMessage(update.message().chat().id(), "Выбери расписание из доступных").replyMarkup(replyKeyboardMarkup));
 
+        user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
     }
 
 

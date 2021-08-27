@@ -10,7 +10,7 @@ import Main.user.TelegramUser;
 public class ServiceForButton implements Service{
     public static void buttonAdd(Update update, TelegramUser user, TelegramBot bot) {
         bot.execute(new SendMessage(update.message().chat().id(), "Как оно будет называться?"));
-        user.setUsersCurrentBotState(update.message().chat().id(), BotState.WAIT_TIMETABLE_NAME);
+        user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_ADD);
     }
 
     public void buttonAWeek(Update update, TelegramUser user, TelegramBot bot) {
