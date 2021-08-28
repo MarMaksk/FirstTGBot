@@ -30,9 +30,11 @@ public class TableOfOneDay {
 
     public static void addTimetableName(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.BUTTON_ADD) {
-            TableOfOneDay.getTableName().put(idMessage, update.message().text());
-            user.setUsersCurrentBotState(idMessage, BotState.WAIT_CHANGE_DAY);
-            ServiceForDay.selectionDay(update, idMessage, user, bot);
+            if (AddTableToSQL.createNewTableName(idMessage, user, update.message().text(), bot)) {
+                getTableName().put(idMessage, update.message().text());
+                user.setUsersCurrentBotState(idMessage, BotState.WAIT_CHANGE_DAY);
+                ServiceForDay.selectionDay(update, idMessage, user, bot);
+            }
         }
     }
 

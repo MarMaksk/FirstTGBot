@@ -68,6 +68,7 @@ public class Runner {
                                     case CHANGE:
                                         return;
                                     case CHOICE:
+
                                         return;
                                     case MESSAGE:
                                         // TODO: 27.08.2021  
@@ -100,18 +101,19 @@ public class Runner {
 
     public void buttonChoice(Update update, List<String> listTableName) {
         //TODO полученние названий из SQL
-        KeyboardButton[] keyboardButtons = new KeyboardButton[listTableName.size()];
-        for (int i = 0; i < keyboardButtons.length; i++) {
-            keyboardButtons[i] = new KeyboardButton(listTableName.get(i));
+        if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE) {
+            KeyboardButton[] keyboardButtons = new KeyboardButton[listTableName.size()];
+            for (int i = 0; i < keyboardButtons.length; i++) {
+                keyboardButtons[i] = new KeyboardButton(listTableName.get(i));
+            }
+            ReplyKeyboardMarkup replyKeyboardMarkup = null;
+            for (KeyboardButton kb : keyboardButtons) {
+                replyKeyboardMarkup.addRow(kb);
+            }
+            replyKeyboardMarkup.resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
+            bot.execute(new SendMessage(update.message().chat().id(), "Выбери расписание из доступных").replyMarkup(replyKeyboardMarkup));
+            user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
         }
-        ReplyKeyboardMarkup replyKeyboardMarkup = null;
-        for (KeyboardButton kb : keyboardButtons) {
-            replyKeyboardMarkup.addRow(kb);
-        }
-        replyKeyboardMarkup.resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
-        bot.execute(new SendMessage(update.message().chat().id(), "Выбери расписание из доступных").replyMarkup(replyKeyboardMarkup));
-
-        user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
     }
 
 
@@ -128,6 +130,7 @@ public class Runner {
                 null : user.getUsersCurrentBotState(update.message().from().id());
         if (update.message() != null)
             text = update.message().text();
+        if (update.message() != null && userStatus == BotState.BUTTON_CHOICE) return MessageType.CHOICE;
         if (update.message() != null && userStatus == BotState.WAIT_CHANGE_DAY) return MessageType.CHANGE_DAY;
         if (update.message() != null && userStatus == BotState.END) return MessageType.END;
         if (update.message() != null && text.equals("/start")) return MessageType.START;
