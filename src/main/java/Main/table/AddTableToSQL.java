@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public class AddTableToSQL extends OperationSQL{
+public class AddTableToSQL extends OperationSQL {
     private static final String INSERT_MONDAY = "INSERT INTO tb_monday(\n" +
             "\ttb_user_id, tb_name, tb_one, tb_two, tb_three, tb_four, tb_five, tb_six, tb_seven, tb_eight, tb_nine, tb_public)\n" +
             "\tVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -48,15 +48,24 @@ public class AddTableToSQL extends OperationSQL{
                 "postgres",
                 "596228")) {
             PreparedStatement stmt = variableDay(idUserMessage, user, con);
-            stmt.setLong(1, idUserMessage);
-            stmt.setString(2, tableName);
-            for (int i = 0; i < oneDay.size(); i++)
-                stmt.setString(3 + i, oneDay.get(i));
-            for (int i = oneDay.size() + 3; i < 12; i++)
-                stmt.setString(i, null);
-            stmt.setBoolean(12, false);
-            stmt.executeUpdate();
-            System.out.println("Sucsess");
+
+            con.setAutoCommit(false);
+
+            try {
+                stmt.setLong(1, idUserMessage);
+                stmt.setString(2, tableName);
+                for (int i = 0; i < oneDay.size(); i++)
+                    stmt.setString(3 + i, oneDay.get(i));
+                for (int i = oneDay.size() + 3; i < 12; i++)
+                    stmt.setString(i, null);
+                stmt.setBoolean(12, false);
+                stmt.executeUpdate();
+                con.commit();
+                System.out.println("Sucsess");
+            } catch (SQLException ex) {
+                con.rollback();
+                throw ex;
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

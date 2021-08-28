@@ -33,10 +33,18 @@ public class TablenameSQL extends OperationSQL {
                 "postgres",
                 "596228")) {
             PreparedStatement stmt = con.prepareStatement(UPDATE_ACTUAL_TABLENAME);
-            stmt.setLong(1, idUserMessage);
-            stmt.setString(2, tableName);
-            stmt.executeUpdate();
-            System.out.println("Sucsess");
+
+            con.setAutoCommit(false);
+            try {
+                stmt.setLong(1, idUserMessage);
+                stmt.setString(2, tableName);
+                stmt.executeUpdate();
+                con.commit();
+                System.out.println("Sucsess");
+            } catch (SQLException ex) {
+                con.rollback();
+                throw ex;
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -47,10 +55,18 @@ public class TablenameSQL extends OperationSQL {
                 "postgres",
                 "596228")) {
             PreparedStatement stmt = con.prepareStatement(INSERT_TABLENAME);
-            stmt.setLong(1, idUserMessage);
-            stmt.setString(2, idUserMessage + tableName);
-            stmt.executeUpdate();
-            System.out.println("Sucsess");
+
+            con.setAutoCommit(false);
+            try {
+                stmt.setLong(1, idUserMessage);
+                stmt.setString(2, idUserMessage + tableName);
+                stmt.executeUpdate();
+                con.commit();
+                System.out.println("Sucsess");
+            } catch (SQLException ex) {
+                con.rollback();
+                throw ex;
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             bot.execute(new SendMessage(idUserMessage, "Расписание с таким названием уже существует"));
