@@ -1,19 +1,19 @@
 package Main;
 
 import Main.service.ServiceForButton;
+import Main.service.ServiceForDay;
 import Main.service.ServiceForStatus;
 import Main.service.ServicePreparationForSQL;
-import Main.service.ServiceForDay;
+import Main.state.BotState;
+import Main.state.MessageType;
 import Main.table.Tablename;
+import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import Main.state.BotState;
-import Main.state.MessageType;
-import Main.user.TelegramUser;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -62,7 +62,9 @@ public class Runner {
 
                                         return;
                                     case ADD:
-                                        // TODO: 27.08.2021  
+                                        // TODO: 27.08.2021
+                                       // if (user.getUsersCurrentBotState(idUserMessage) == BotState.BUTTON_ADD)
+                                            ServiceForDay.fillMapDaysButton(idUserMessage);
                                         ServiceForButton.buttonAdd(update, user, bot);
                                         return;
                                     case CHANGE:
