@@ -1,5 +1,6 @@
 package Main.service;
 
+import Main.table.Tablename;
 import Main.user.TelegramUser;
 import Main.state.BotState;
 import Main.table.AddTableToSQL;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class ServicePreparationForSQL implements Service {
     private static Map<Long, Integer> couplesPerDay = new HashMap<>();
 
-    public static void preparationForWriting(Update update, Long idUserMessage, TelegramUser user, TelegramBot bot) {
+    public static void preparationDayForWriting(Update update, Long idUserMessage, TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idUserMessage) == BotState.DAY_RECEIVED) {
             if (!couplesPerDay.containsKey(idUserMessage)) {
                 couplesPerDay.put(idUserMessage, Integer.valueOf(update.message().text()));
@@ -22,7 +23,7 @@ public class ServicePreparationForSQL implements Service {
                 return;
             } else if (couplesPerDay.get(idUserMessage) == 1) {
                 TableOfOneDay.setOneDay(idUserMessage, update.message().text());
-                AddTableToSQL.createNewTable(idUserMessage, user, TableOfOneDay.getListOfOneDay(idUserMessage), TableOfOneDay.getTableName().get(idUserMessage));
+                AddTableToSQL.createNewTable(idUserMessage, user, TableOfOneDay.getListOfOneDay(idUserMessage), Tablename.getTableName().get(idUserMessage));
                 user.setUsersCurrentBotState(idUserMessage, BotState.WAIT_CHANGE_DAY);
                 ServiceForDay.selectionDay(update, idUserMessage, user, bot);
                 couplesPerDay.remove(idUserMessage);

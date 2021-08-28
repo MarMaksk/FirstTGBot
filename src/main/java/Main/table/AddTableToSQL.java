@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public class AddTableToSQL {
+public class AddTableToSQL extends OperationSQL{
     private static final String INSERT_MONDAY = "INSERT INTO tb_monday(\n" +
             "\ttb_user_id, tb_name, tb_one, tb_two, tb_three, tb_four, tb_five, tb_six, tb_seven, tb_eight, tb_nine, tb_public)\n" +
             "\tVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -37,19 +37,7 @@ public class AddTableToSQL {
     private static final String INSERT_SUNDAY = "INSERT INTO tb_sunday(\n" +
             "\ttb_user_id, tb_name, tb_one, tb_two, tb_three, tb_four, tb_five, tb_six, tb_seven, tb_eight, tb_nine, tb_public)\n" +
             "\tVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-    private static final String INSERT_TABLENAME = "INSERT INTO tb_users_tablename(\n" +
-            "\ttb_user_id, tb_tablename)\n" +
-            "\tVALUES (?, ?);";
 
-    //TODO refactoring - make one method
-    private static Connection getConnection() throws SQLException {
-        Connection con = DriverManager.getConnection(
-                Config.getProperty(Config.DB_URL),
-                Config.getProperty(Config.DB_LOGIN),
-                Config.getProperty(Config.DB_PASSWORD)
-        );
-        return con;
-    }
 
     //DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
 //        "postgres",
@@ -74,23 +62,6 @@ public class AddTableToSQL {
         }
     }
 
-
-    public static boolean createNewTableName(Long idUserMessage, TelegramUser user, String tableName, TelegramBot bot) {
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
-                "postgres",
-                "596228")) {
-            PreparedStatement stmt = con.prepareStatement(INSERT_TABLENAME);
-            stmt.setLong(1, idUserMessage);
-            stmt.setString(2, idUserMessage + tableName);
-            stmt.executeUpdate();
-            System.out.println("Sucsess");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            bot.execute(new SendMessage(idUserMessage, "Расписание с таким названием уже существует"));
-            return false;
-        }
-        return true;
-    }
 
     @Nullable
     private static PreparedStatement variableDay(Long idUserMessage, TelegramUser user, Connection con) throws SQLException {

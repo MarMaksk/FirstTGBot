@@ -4,7 +4,7 @@ import Main.service.ServiceForButton;
 import Main.service.ServiceForStatus;
 import Main.service.ServicePreparationForSQL;
 import Main.service.ServiceForDay;
-import Main.table.TableOfOneDay;
+import Main.table.Tablename;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
@@ -72,8 +72,8 @@ public class Runner {
                                         return;
                                     case MESSAGE:
                                         // TODO: 27.08.2021  
-                                        TableOfOneDay.addTimetableName(update, idUserMessage, user, bot);
-                                        ServicePreparationForSQL.preparationForWriting(update, update.message().from().id(), user, bot);
+                                        Tablename.addTimetableName(update, idUserMessage, user, bot);
+                                        ServicePreparationForSQL.preparationDayForWriting(update, update.message().from().id(), user, bot);
                                         return;
                                     case CHANGE_DAY:
                                         ServiceForDay.changeDay(update, update.message().text(), user.getUsersCurrentBotState(idUserMessage), user, bot);
