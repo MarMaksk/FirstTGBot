@@ -21,7 +21,24 @@ public class TablenameSQL extends OperationSQL {
             "\tVALUES (?, ?);";
     private static final String UPDATE_ACTUAL_TABLENAME = "UPDATE tb_users_actual_table_name\n" +
             "\tSET tb_user_id=?, tb_tablename=?\n";
+    private static final String SELECT_ACTUAL_TABLENAME = "SELECT tb_tablename\n" +
+            "\tFROM tb_users_actual_table_name WHERE tb_user_id=?";
 
+    public static String getActualTablename(Long userId) {
+        String tablename = null;
+        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
+                "postgres",
+                "596228")) {
+            PreparedStatement stmt = con.prepareStatement(SELECT_ACTUAL_TABLENAME);
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            tablename = rs.getString("tb_tablename").replace(userId+"", "");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return tablename;
+    }
     //TODO refactoring - make one method
 
     //DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
@@ -57,7 +74,7 @@ public class TablenameSQL extends OperationSQL {
                     }
                 }
                 ReplyKeyboardRemove rkr = new ReplyKeyboardRemove();
-                bot.execute(new SendMessage(idUserMessage, "Расписание изменено успешно").replyMarkup(rkr));
+                bot.execute(new SendMessage(idUserMessage, "Расписание выбрано").replyMarkup(rkr));
                 user.setUsersCurrentBotState(idUserMessage, BotState.WAIT_STATUS);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();

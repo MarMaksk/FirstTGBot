@@ -32,41 +32,49 @@ public class ServiceForDay implements Service {
     public static void changeDay(@NotNull Update update, String text, TelegramUser user, TelegramBot bot) {
         Long userID = update.message().from().id();
         if (update.message() != null && user.getUsersCurrentBotState(userID) == BotState.WAIT_CHANGE_DAY) {
-            //         if (daysButton.entrySet().contains(text)){}
-            if (daysButton.get(userID).contains(text)) {
-                user.setUsersCurrentDayState(userID, DayState.MONDAY);
-                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
-                daysButton.get(userID).remove(0);
-            }
-            if (daysButton.entrySet().contains(text)) {
-                user.setUsersCurrentDayState(userID, DayState.TUESDAY);
-                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
-                daysButton.get(userID).remove(1);
-            }
-            if (daysButton.entrySet().contains(text)) {
-                user.setUsersCurrentDayState(userID, DayState.WEDNESDAY);
-                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
-                daysButton.get(userID).remove(2);
-            }
-            if (daysButton.entrySet().contains(text)) {
-                user.setUsersCurrentDayState(userID, DayState.THURSDAY);
-                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
-                daysButton.get(userID).remove(3);
-            }
-            if (daysButton.entrySet().contains(text)) {
-                user.setUsersCurrentDayState(userID, DayState.FRIDAY);
-                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
-                daysButton.get(userID).remove(4);
-            }
-            if (daysButton.entrySet().contains(text)) {
-                user.setUsersCurrentDayState(userID, DayState.SATURDAY);
-                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
-                daysButton.get(userID).remove(5);
-            }
-            if (daysButton.entrySet().contains(text)) {
-                user.setUsersCurrentDayState(userID, DayState.SUNDAY);
-                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
-                daysButton.get(userID).remove(6);
+            for (String list : daysButton.get(userID)) {
+                if (list.equals(text)) {
+                    user.setUsersCurrentDayState(userID, DayState.MONDAY);
+                    user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+                    daysButton.get(userID).remove(text);
+                    break;
+                }
+                if (list.equals(text)) {
+                    user.setUsersCurrentDayState(userID, DayState.TUESDAY);
+                    user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+                    daysButton.get(userID).remove(text);
+                    break;
+                }
+                if (list.equals(text)) {
+                    user.setUsersCurrentDayState(userID, DayState.WEDNESDAY);
+                    user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+                    daysButton.get(userID).remove(text);
+                    break;
+                }
+                if (list.equals(text)) {
+                    user.setUsersCurrentDayState(userID, DayState.THURSDAY);
+                    user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+                    daysButton.get(userID).remove(text);
+                    break;
+                }
+                if (list.equals(text)) {
+                    user.setUsersCurrentDayState(userID, DayState.FRIDAY);
+                    user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+                    daysButton.get(userID).remove(text);
+                    break;
+                }
+                if (list.equals(text)) {
+                    user.setUsersCurrentDayState(userID, DayState.SATURDAY);
+                    user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+                    daysButton.get(userID).remove(text);
+                    break;
+                }
+                if (list.equals(text)) {
+                    user.setUsersCurrentDayState(userID, DayState.SUNDAY);
+                    user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+                    daysButton.get(userID).remove(text);
+                    break;
+                }
             }
             if (text.equals("Завершить")) {
                 user.setUsersCurrentDayState(userID, DayState.WAIT_STATUS);

@@ -1,11 +1,8 @@
 package Main.table;
 
 
-import Main.user.TelegramUser;
-import Main.config.Config;
 import Main.state.DayState;
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SendMessage;
+import Main.user.TelegramUser;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
@@ -13,7 +10,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 public class AddTableToSQL extends OperationSQL {
     private static final String INSERT_MONDAY = "INSERT INTO tb_monday(\n" +
@@ -54,10 +50,10 @@ public class AddTableToSQL extends OperationSQL {
             try {
                 stmt.setLong(1, idUserMessage);
                 stmt.setString(2, tableName);
-                for (int i = 0; i < oneDay.size(); i++)
-                    stmt.setString(3 + i, oneDay.get(i));
+                for (int i = oneDay.size() + 2; i > 2; i--)
+                    stmt.setString(i, oneDay.get(i-3));
                 for (int i = oneDay.size() + 3; i < 12; i++)
-                    stmt.setString(i, null);
+                    stmt.setString(i, "empty");
                 stmt.setBoolean(12, false);
                 stmt.executeUpdate();
                 con.commit();

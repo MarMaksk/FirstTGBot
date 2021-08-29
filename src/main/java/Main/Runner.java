@@ -6,6 +6,7 @@ import Main.service.ServiceForStatus;
 import Main.service.ServicePreparationForSQL;
 import Main.state.BotState;
 import Main.state.MessageType;
+import Main.table.SelectTableFromSQL;
 import Main.table.Tablename;
 import Main.table.TablenameSQL;
 import Main.user.TelegramUser;
@@ -52,6 +53,7 @@ public class Runner {
                                         invokeChatMember(update);
                                         return;
                                     case NOW:
+                                        SelectTableFromSQL.getTableOfOneDay(bot, idUserMessage, "monday", user);
                                         return;
                                     case NEXT:
                                         return;
