@@ -7,5 +7,6 @@ public enum BotState {
     BUTTON_ADD,
     BUTTON_AWEEK,
     BUTTON_CHOICE,
+    SET_ACTUAL_TABLENAME,
     END
 }

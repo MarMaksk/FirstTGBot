@@ -21,9 +21,10 @@ public class ServiceForDay implements Service {
 
     public static void selectionDay(Long idMessage, @NotNull TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY) {
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("Завершить")
+            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("")
                     .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
             daysButton.get(idMessage).forEach(el -> replyKeyboardMarkup.addRow(el));
+            replyKeyboardMarkup.addRow("Завершить");
             bot.execute(new SendMessage(idMessage, "Какой день недели будем заполнять?").replyMarkup(replyKeyboardMarkup));
         }
     }
@@ -70,10 +71,11 @@ public class ServiceForDay implements Service {
             if (text.equals("Завершить")) {
                 user.setUsersCurrentDayState(userID, DayState.WAIT_STATUS);
                 user.setUsersCurrentBotState(userID, BotState.WAIT_STATUS);
+                daysButton.remove(userID);
                 ServiceForStatus.buttonEndInDayChange(update, bot);
                 return;
             }
-            if (user.getUsersCurrentBotState(userID) == BotState.WAIT_CHANGE_DAY){
+            if (user.getUsersCurrentBotState(userID) == BotState.WAIT_CHANGE_DAY) {
                 bot.execute(new SendMessage(userID, "Похоже этот день уже заполнен"));
                 return;
             }

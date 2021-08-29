@@ -7,6 +7,7 @@ import Main.service.ServicePreparationForSQL;
 import Main.state.BotState;
 import Main.state.MessageType;
 import Main.table.Tablename;
+import Main.table.TablenameSQL;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -70,7 +71,10 @@ public class Runner {
                                     case CHANGE:
                                         return;
                                     case CHOICE:
-
+                                        buttonChoice(update);
+                                        return;
+                                    case CHOICE_TABLENAME:
+                                        TablenameSQL.setActualTablename(bot, idUserMessage, update.message().text(), user);
                                         return;
                                     case MESSAGE:
                                         // TODO: 27.08.2021  
@@ -103,14 +107,15 @@ public class Runner {
     //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
     // TODO А если я напишу на убранный понедельник понедельник? Сколько может быть пар? Напоминания
 
-    public void buttonChoice(Update update, List<String> listTableName) {
+    public void buttonChoice(Update update) {
         //TODO полученние названий из SQL
         if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE) {
-            KeyboardButton[] keyboardButtons = new KeyboardButton[listTableName.size()];
+            List<String> listTablename = TablenameSQL.getExistingTablename(update.message().chat().id());
+            KeyboardButton[] keyboardButtons = new KeyboardButton[listTablename.size()];
             for (int i = 0; i < keyboardButtons.length; i++) {
-                keyboardButtons[i] = new KeyboardButton(listTableName.get(i));
+                keyboardButtons[i] = new KeyboardButton(listTablename.get(i));
             }
-            ReplyKeyboardMarkup replyKeyboardMarkup = null;
+            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("");
             for (KeyboardButton kb : keyboardButtons) {
                 replyKeyboardMarkup.addRow(kb);
             }
@@ -118,6 +123,7 @@ public class Runner {
             bot.execute(new SendMessage(update.message().chat().id(), "Выбери расписание из доступных").replyMarkup(replyKeyboardMarkup));
             user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
         }
+        return;
     }
 
 
@@ -134,9 +140,6 @@ public class Runner {
                 null : user.getUsersCurrentBotState(update.message().from().id());
         if (update.message() != null)
             text = update.message().text();
-        if (update.message() != null && userStatus == BotState.BUTTON_CHOICE) return MessageType.CHOICE;
-        if (update.message() != null && userStatus == BotState.WAIT_CHANGE_DAY) return MessageType.CHANGE_DAY;
-        if (update.message() != null && userStatus == BotState.END) return MessageType.END;
         if (update.message() != null && text.equals("/start")) return MessageType.START;
         if (update.message() != null && text.equals("/now")) return MessageType.NOW;
         if (update.message() != null && text.equals("/next")) return MessageType.NEXT;
@@ -146,6 +149,10 @@ public class Runner {
         if (update.message() != null && text.equals("/add")) return MessageType.ADD;
         if (update.message() != null && text.equals("/change")) return MessageType.CHANGE;
         if (update.message() != null && text.equals("/choice")) return MessageType.CHOICE;
+        if (update.message() != null && userStatus == BotState.BUTTON_CHOICE) return MessageType.CHOICE_TABLENAME;
+        if (update.message() != null && userStatus == BotState.SET_ACTUAL_TABLENAME) return MessageType.CHOICE;
+        if (update.message() != null && userStatus == BotState.WAIT_CHANGE_DAY) return MessageType.CHANGE_DAY;
+        if (update.message() != null && userStatus == BotState.END) return MessageType.END;
         if (update.message() != null) return MessageType.MESSAGE;
         if (update.myChatMember() != null) return MessageType.CHAT_MEMBER;
         if (update.callbackQuery() != null) return MessageType.CALLBACK_QUERY;

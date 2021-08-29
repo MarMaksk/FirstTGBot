@@ -14,7 +14,7 @@ public class Tablename {
 
     public static void addTimetableName(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.BUTTON_ADD) {
-            if (TablenameSQL.createNewTableName(idMessage, user, update.message().text(), bot)) {
+            if (TablenameSQL.createNewTablename(idMessage, user, update.message().text(), bot)) {
                 getTableName().put(idMessage, update.message().text());
                 user.setUsersCurrentBotState(idMessage, BotState.WAIT_CHANGE_DAY);
                 ServiceForDay.selectionDay(idMessage, user, bot);
@@ -22,9 +22,6 @@ public class Tablename {
         }
     }
 
-    public static void setActualTablename() {
-        //TODO
-    }
 
     public static Map<Long, String> getTableName() {
         return tableName;

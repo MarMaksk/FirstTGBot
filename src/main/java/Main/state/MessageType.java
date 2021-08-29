@@ -16,6 +16,7 @@ public enum MessageType {
     ADD,
     CHANGE,
     CHOICE,
+    CHOICE_TABLENAME,
     END,
     INTEGER
 
