@@ -17,13 +17,13 @@ public class Tablename {
             if (TablenameSQL.createNewTableName(idMessage, user, update.message().text(), bot)) {
                 getTableName().put(idMessage, update.message().text());
                 user.setUsersCurrentBotState(idMessage, BotState.WAIT_CHANGE_DAY);
-                ServiceForDay.selectionDay(update, idMessage, user, bot);
+                ServiceForDay.selectionDay(idMessage, user, bot);
             }
         }
     }
 
     public static void setActualTablename() {
-
+        //TODO
     }
 
     public static Map<Long, String> getTableName() {

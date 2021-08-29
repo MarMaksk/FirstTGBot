@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -18,54 +19,64 @@ public class ServiceForDay implements Service {
 
     private static Map<Long, List<String>> daysButton = new LinkedHashMap<>();
 
-    public static void selectionDay(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {
+    public static void selectionDay(Long idMessage, @NotNull TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY) {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("Завершить")
-               .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
+                    .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
             daysButton.get(idMessage).forEach(el -> replyKeyboardMarkup.addRow(el));
-
             bot.execute(new SendMessage(idMessage, "Какой день недели будем заполнять?").replyMarkup(replyKeyboardMarkup));
         }
     }
 
-    public static void changeDay(Update update, String text, BotState userStatus, TelegramUser user, TelegramBot bot) {
-        if (update.message() != null && user.getUsersCurrentBotState(update.message().from().id()) == BotState.WAIT_CHANGE_DAY) {
-            Long userID = update.message().from().id();
-            if (text.equals("Понедельник")) {
+    public static void changeDay(@NotNull Update update, String text, TelegramUser user, TelegramBot bot) {
+        Long userID = update.message().from().id();
+        if (update.message() != null && user.getUsersCurrentBotState(userID) == BotState.WAIT_CHANGE_DAY) {
+            //         if (daysButton.entrySet().contains(text)){}
+            if (daysButton.get(userID).contains(text)) {
                 user.setUsersCurrentDayState(userID, DayState.MONDAY);
+                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                 daysButton.get(userID).remove(0);
             }
-            if (text.equals("Вторник")) {
+            if (daysButton.entrySet().contains(text)) {
                 user.setUsersCurrentDayState(userID, DayState.TUESDAY);
+                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                 daysButton.get(userID).remove(1);
             }
-            if (text.equals("Среда")) {
+            if (daysButton.entrySet().contains(text)) {
                 user.setUsersCurrentDayState(userID, DayState.WEDNESDAY);
+                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                 daysButton.get(userID).remove(2);
             }
-            if (text.equals("Четверг")) {
+            if (daysButton.entrySet().contains(text)) {
                 user.setUsersCurrentDayState(userID, DayState.THURSDAY);
+                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                 daysButton.get(userID).remove(3);
             }
-            if (text.equals("Пятница")) {
+            if (daysButton.entrySet().contains(text)) {
                 user.setUsersCurrentDayState(userID, DayState.FRIDAY);
+                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                 daysButton.get(userID).remove(4);
             }
-            if (text.equals("Суббота")) {
+            if (daysButton.entrySet().contains(text)) {
                 user.setUsersCurrentDayState(userID, DayState.SATURDAY);
+                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                 daysButton.get(userID).remove(5);
             }
-            if (text.equals("Воскресенье")) {
+            if (daysButton.entrySet().contains(text)) {
                 user.setUsersCurrentDayState(userID, DayState.SUNDAY);
+                user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                 daysButton.get(userID).remove(6);
             }
             if (text.equals("Завершить")) {
                 user.setUsersCurrentDayState(userID, DayState.WAIT_STATUS);
-                user.setUsersCurrentBotState(userID, BotState.END);
-                ServiceForStatus.endStatus(update, bot);
+                user.setUsersCurrentBotState(userID, BotState.WAIT_STATUS);
+                ServiceForStatus.buttonEndInDayChange(update, bot);
                 return;
             }
-            user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
+            if (user.getUsersCurrentBotState(userID) == BotState.WAIT_CHANGE_DAY){
+                bot.execute(new SendMessage(userID, "Похоже этот день уже заполнен"));
+                return;
+            }
             ReplyKeyboardRemove rkr = new ReplyKeyboardRemove();
             bot.execute(new SendMessage(userID, "Сколько будет пар?").replyMarkup(rkr));
         }

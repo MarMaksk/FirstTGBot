@@ -1,10 +1,10 @@
 package Main.service;
 
-import Main.table.Tablename;
-import Main.user.TelegramUser;
 import Main.state.BotState;
 import Main.table.AddTableToSQL;
 import Main.table.TableOfOneDay;
+import Main.table.Tablename;
+import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -25,7 +25,7 @@ public class ServicePreparationForSQL implements Service {
                 TableOfOneDay.setOneDay(idUserMessage, update.message().text());
                 AddTableToSQL.createNewTable(idUserMessage, user, TableOfOneDay.getListOfOneDay(idUserMessage), Tablename.getTableName().get(idUserMessage));
                 user.setUsersCurrentBotState(idUserMessage, BotState.WAIT_CHANGE_DAY);
-                ServiceForDay.selectionDay(update, idUserMessage, user, bot);
+                ServiceForDay.selectionDay(idUserMessage, user, bot);
                 couplesPerDay.remove(idUserMessage);
                 return;
             } else {

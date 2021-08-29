@@ -63,8 +63,8 @@ public class Runner {
                                         return;
                                     case ADD:
                                         // TODO: 27.08.2021
-                                       // if (user.getUsersCurrentBotState(idUserMessage) == BotState.BUTTON_ADD)
-                                            ServiceForDay.fillMapDaysButton(idUserMessage);
+                                        // if (user.getUsersCurrentBotState(idUserMessage) == BotState.BUTTON_ADD)
+                                        ServiceForDay.fillMapDaysButton(idUserMessage);
                                         ServiceForButton.buttonAdd(update, user, bot);
                                         return;
                                     case CHANGE:
@@ -78,7 +78,7 @@ public class Runner {
                                         ServicePreparationForSQL.preparationDayForWriting(update, update.message().from().id(), user, bot);
                                         return;
                                     case CHANGE_DAY:
-                                        ServiceForDay.changeDay(update, update.message().text(), user.getUsersCurrentBotState(idUserMessage), user, bot);
+                                        ServiceForDay.changeDay(update, update.message().text(), user, bot);
                                         return;
                                     case CHAT_MEMBER:
                                         invokeChatMember(update);
@@ -86,7 +86,7 @@ public class Runner {
                                     case CALLBACK_QUERY:
                                         return;
                                     case END:
-                                        ServiceForStatus.endStatus(update, bot);
+                                        ServiceForStatus.buttonEndInDayChange(update, bot);
                                         return;
                                     default:
                                         throw new IllegalStateException("Unexpected value: " + messageType(update));
@@ -100,6 +100,8 @@ public class Runner {
 
         });
     }
+    //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
+    // TODO А если я напишу на убранный понедельник понедельник? Сколько может быть пар? Напоминания
 
     public void buttonChoice(Update update, List<String> listTableName) {
         //TODO полученние названий из SQL
