@@ -62,7 +62,7 @@ public class Runner {
                                     case TOMORROW:
                                         return;
                                     case AWEEK:
-
+                                        SelectTableFromSQL.showAllTable(bot, idUserMessage);
                                         return;
                                     case ADD:
                                         // TODO: 27.08.2021
