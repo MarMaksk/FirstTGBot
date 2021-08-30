@@ -6,7 +6,6 @@ import Main.service.ServiceForStatus;
 import Main.service.ServicePreparationForSQL;
 import Main.state.BotState;
 import Main.state.MessageType;
-import Main.table.SelectTableFromSQL;
 import Main.table.Tablename;
 import Main.table.TablenameSQL;
 import Main.table.UpdateTableToSQL;
@@ -14,11 +13,16 @@ import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.KeyboardButton;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 public class Runner {
@@ -54,41 +58,38 @@ public class Runner {
                                         invokeChatMember(update);
                                         return;
                                     case NOW:
-                                        SelectTableFromSQL.getTableOfOneDay(bot, idUserMessage, "monday", user);
+                                        buttonNow();
                                         return;
                                     case NEXT:
                                         return;
                                     case TODAY:
+                                        ServiceForButton.buttonToday(bot, idUserMessage);
                                         return;
                                     case TOMORROW:
+                                        ServiceForButton.buttonTomorrow(bot, idUserMessage);
                                         return;
                                     case AWEEK:
-                                        SelectTableFromSQL.showAllTable(bot, idUserMessage);
+                                        ServiceForButton.buttonAWeek(idUserMessage, bot);
                                         return;
                                     case ADD:
-                                        // TODO: 27.08.2021
-                                        // if (user.getUsersCurrentBotState(idUserMessage) == BotState.BUTTON_ADD)
                                         ServiceForDay.fillMapDaysButton(idUserMessage);
                                         ServiceForButton.buttonAdd(update, user, bot);
                                         return;
                                     case CHANGE:
                                         ServiceForDay.fillMapDaysButton(idUserMessage);
-                                        buttonChange(bot, idUserMessage);
+                                        ServiceForButton.buttonChange(bot, user, idUserMessage);
                                         return;
                                     case CHANGE_TABLE:
-                                        //      UpdateTableToSQL.setDay(bot, update, user);
                                         ServicePreparationForSQL.preparationDayForWriting(update, idUserMessage, user, bot);
                                         UpdateTableToSQL.preparationDayForUpdate(bot, user, update.message().text().toLowerCase(), idUserMessage);
-                                        //      buttonChange(bot, idUserMessage);
                                         return;
                                     case CHOICE:
-                                        buttonChoice(update);
+                                        ServiceForButton.buttonChoice(update, user, bot);
                                         return;
                                     case CHOICE_TABLENAME:
                                         TablenameSQL.setActualTablename(bot, idUserMessage, update.message().text(), user);
                                         return;
                                     case MESSAGE:
-                                        // TODO: 27.08.2021  
                                         Tablename.addTimetableName(update, idUserMessage, user, bot);
                                         ServicePreparationForSQL.preparationDayForWriting(update, update.message().from().id(), user, bot);
                                         return;
@@ -115,33 +116,36 @@ public class Runner {
 
         });
     }
+
     //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
     // TODO А если я напишу на убранный понедельник понедельник? Сколько может быть пар? Напоминания
+    public static void buttonNow() {
+        SimpleDateFormat sdf = new SimpleDateFormat("H");
 
-    public static void buttonChange(TelegramBot bot, Long userId) {
-        user.setUsersCurrentBotState(userId, BotState.BUTTON_CHANGE);
-        ServiceForDay.selectionDay(userId, user, bot);
-    }
+        //   Date date = sdf.parse("2");
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("HH:mm")
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault());
 
-    public void buttonChoice(Update update) {
-        //TODO полученние названий из SQL
-        if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE) {
-            List<String> listTablename = TablenameSQL.getExistingTablename(update.message().chat().id());
-            KeyboardButton[] keyboardButtons = new KeyboardButton[listTablename.size()];
-            for (int i = 0; i < keyboardButtons.length; i++) {
-                keyboardButtons[i] = new KeyboardButton(listTablename.get(i));
-            }
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("");
-            for (KeyboardButton kb : keyboardButtons) {
-                replyKeyboardMarkup.addRow(kb);
-            }
-            replyKeyboardMarkup.resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
-            bot.execute(new SendMessage(update.message().chat().id(), "Выбери расписание из доступных").replyMarkup(replyKeyboardMarkup));
-            user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
+        Instant now = Instant.now();
+        LocalDateTime ld = LocalDateTime.now();
+        LocalTime l = LocalTime.now();
+        LocalTime lt = LocalTime.parse("22:00"); //Сюда вставить время начало из таблицы
+
+        if (l.isAfter(lt)) {
+            System.out.println(true);
         }
-        return;
-    }
+        lt = lt.plusHours(1).plusMinutes(30);
+        System.out.println(lt);
+        System.out.println(l);
+        String formatted = formatter.format(ld);
+        System.out.println(formatted);
+//            String fileName = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME);
+//            String fileNam1e = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+//            System.out.println(date);
 
+    }
 
     private void invokeChatMember(Update update) {
         bot.execute(new SendMessage(update.message().chat().id(), "Когда-то когда человечество от  ̶g̶̶̶a̶̶̶r̶̶̶b̶̶̶a̶̶̶g̶̶̶e̶̶̶ ̶̶̶c̶̶̶o̶̶̶l̶̶̶l̶̶̶e̶̶̶c̶̶̶t̶̶̶o̶̶̶r̶̶̶ ̶̶̶б̶̶̶ы̶̶̶л̶̶̶о̶̶̶ ̶̶̶с̶̶̶п̶̶̶а̶̶̶с̶̶̶е̶̶̶н̶̶̶о̶̶̶ ̶̶̶п̶̶̶е̶̶̶р̶̶̶е̶̶̶о̶̶̶п̶̶̶р̶̶̶е̶̶̶д̶̶̶е̶̶̶л̶̶̶ё̶̶̶н̶̶̶н̶̶̶ы̶̶̶м̶̶̶ ̶̶̶м̶̶̶е̶̶̶т̶̶̶о̶̶̶д̶̶̶о̶̶̶м̶̶̶ ̶̶̶f̶̶̶i̶̶̶n̶̶̶a̶̶̶l̶̶̶i̶̶̶z̶̶̶e̶̶ " +

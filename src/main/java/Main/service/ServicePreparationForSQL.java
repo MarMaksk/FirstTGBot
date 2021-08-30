@@ -49,5 +49,6 @@ public class ServicePreparationForSQL implements Service {
     }
 
     public static void preparationForReading(Update update, Long idUserMessage, TelegramUser user, TelegramBot bot) {
+
     }
 }

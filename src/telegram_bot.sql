@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS tb_thursday;
 DROP TABLE IF EXISTS tb_saturday;
 DROP TABLE IF EXISTS tb_friday;
 DROP TABLE IF EXISTS tb_sunday;
+DROP TABLE IF EXISTS tb_user_schedule_time;
 
 
 CREATE TABLE tb_monday
@@ -138,3 +139,13 @@ CREATE TABLE tb_users_actual_table_name
     tb_tablename varchar(200) not null,
     PRIMARY KEY (tb_user_id)
 );
+CREATE TABLE tb_user_schedule_time
+(
+    tb_user_id          integer,
+    tb_time_start       varchar(5),
+    tb_time_lunch       varchar(5),
+    tb_lunch_after      integer,
+    tb_time_change      varchar(5),
+    tb_time_fourth_pair varchar(5),
+    PRIMARY KEY (tb_user_id)
+)
