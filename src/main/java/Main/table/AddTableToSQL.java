@@ -39,14 +39,13 @@ public class AddTableToSQL extends OperationSQL {
 //        "postgres",
 //        "596228")
 // TODO: 26.08.2021
-    public static void createNewTable(Long idUserMessage, TelegramUser user, List<String> oneDay, String tableName) {
+    public static void createNewTable(Long idUserMessage, TelegramUser user, List<String> oneDay, PreparedStatement stmt) {
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
                 "postgres",
                 "596228")) {
-            PreparedStatement stmt = variableDay(idUserMessage, user, con);
-
+            if (stmt == null)
+                stmt = getPreparedStatement(idUserMessage, user, con);
             con.setAutoCommit(false);
-
             try {
                 stmt.setLong(1, idUserMessage);
                 stmt.setString(2, tableName);
@@ -69,7 +68,7 @@ public class AddTableToSQL extends OperationSQL {
 
 
     @Nullable
-    private static PreparedStatement variableDay(Long idUserMessage, TelegramUser user, Connection con) throws SQLException {
+    private static PreparedStatement getPreparedStatement(Long idUserMessage, TelegramUser user, Connection con) throws SQLException {
         PreparedStatement stmt = null;
         DayState userStatus = user.getUsersCurrentDayState(idUserMessage);
         if (userStatus == DayState.MONDAY)

@@ -75,11 +75,11 @@ public class SelectTableFromSQL {
     }
 
     private static void weekend(Long idUserMessage, PreparedStatement stmt5, List<String> ls, String day) throws SQLException {
-        List<String> ls5 = getOneTable(idUserMessage, stmt5);
-        ls5.removeAll(Collections.singleton(null));
-        if (!ls5.isEmpty()) {
+        List<String> ls0 = getOneTable(idUserMessage, stmt5);
+        ls0.removeAll(Collections.singleton(null));
+        if (!ls0.isEmpty()) {
             ls.add(day);
-            ls5.forEach(el -> ls.add(el));
+            ls0.forEach(el -> ls.add(el));
         }
     }
 

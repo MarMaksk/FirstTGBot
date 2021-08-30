@@ -1,12 +1,9 @@
 package Main.table;
 
-import Main.user.TelegramUser;
-import Main.service.ServiceForDay;
-import Main.state.BotState;
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.Update;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class TableOfOneDay {
     private static Map<Long, List<String>> oneDay = new HashMap<>();
@@ -17,6 +14,10 @@ public class TableOfOneDay {
             list = getOneDay().get(idMessage);
         list.add(task);
         oneDay.put(idMessage, list);
+    }
+
+    public static void removeUserList(Long userId){
+        oneDay.remove(userId);
     }
 
     public static List<String> getListOfOneDay(Long idMessage) {

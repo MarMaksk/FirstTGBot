@@ -11,13 +11,13 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ServiceForDay implements Service {
 
-    private static Map<Long, List<String>> daysButton = new LinkedHashMap<>();
+    private static Map<Long, Set<String>> daysButton = new LinkedHashMap<>();
 
     public static void selectionDay(Long idMessage, @NotNull TelegramUser user, TelegramBot bot) {
         if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY) {
@@ -25,7 +25,11 @@ public class ServiceForDay implements Service {
                     .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
             daysButton.get(idMessage).forEach(el -> replyKeyboardMarkup.addRow(el));
             replyKeyboardMarkup.addRow("Завершить");
+<<<<<<< HEAD
+            bot.execute(new SendMessage(idMessage, "С каким днём будем работать?").replyMarkup(replyKeyboardMarkup));
+=======
             bot.execute(new SendMessage(idMessage, "Какой день недели будем заполнять?").replyMarkup(replyKeyboardMarkup));
+>>>>>>> parent of 5108b91 (Work with button change)
         }
     }
 
@@ -94,22 +98,22 @@ public class ServiceForDay implements Service {
     }
 
     public static void fillMapDaysButton(Long idUser) {
-        List<String> listOfDays = new LinkedList<>();
-        listOfDays.add(0, "Понедельник");
-        listOfDays.add(1, "Вторник");
-        listOfDays.add(2, "Среда");
-        listOfDays.add(3, "Четверг");
-        listOfDays.add(4, "Пятница");
-        listOfDays.add(5, "Суббота");
-        listOfDays.add(6, "Воскресенье");
+        Set<String> listOfDays = new LinkedHashSet<>();
+        listOfDays.add("Понедельник");
+        listOfDays.add("Вторник");
+        listOfDays.add("Среда");
+        listOfDays.add("Четверг");
+        listOfDays.add("Пятница");
+        listOfDays.add("Суббота");
+        listOfDays.add("Воскресенье");
         daysButton.put(idUser, listOfDays);
     }
 
-    public static Map<Long, List<String>> getDaysButton() {
+    public static Map<Long, Set<String>> getDaysButton() {
         return daysButton;
     }
 
-    public static void setDaysButton(Map<Long, List<String>> daysButton) {
+    public static void setDaysButton(Map<Long, Set<String>> daysButton) {
         ServiceForDay.daysButton = daysButton;
     }
 }

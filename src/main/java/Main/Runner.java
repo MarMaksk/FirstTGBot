@@ -9,12 +9,16 @@ import Main.state.MessageType;
 import Main.table.SelectTableFromSQL;
 import Main.table.Tablename;
 import Main.table.TablenameSQL;
+import Main.table.UpdateTableToSQL;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+<<<<<<< HEAD
+=======
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+>>>>>>> parent of 5108b91 (Work with button change)
 import com.pengrad.telegrambot.request.SendMessage;
 
 import java.util.List;
@@ -71,6 +75,17 @@ public class Runner {
                                         ServiceForButton.buttonAdd(update, user, bot);
                                         return;
                                     case CHANGE:
+<<<<<<< HEAD
+                                        ServiceForDay.fillMapDaysButton(idUserMessage);
+                                        buttonChange(bot, idUserMessage);
+                                        return;
+                                    case CHANGE_TABLE:
+                                        //      UpdateTableToSQL.setDay(bot, update, user);
+                                        ServicePreparationForSQL.preparationDayForWriting(update, idUserMessage, user, bot);
+                                        UpdateTableToSQL.preparationDayForUpdate(bot, user, update.message().text().toLowerCase(), idUserMessage);
+                                        //      buttonChange(bot, idUserMessage);
+=======
+>>>>>>> parent of 5108b91 (Work with button change)
                                         return;
                                     case CHOICE:
                                         buttonChoice(update);
@@ -109,6 +124,11 @@ public class Runner {
     //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
     // TODO А если я напишу на убранный понедельник понедельник? Сколько может быть пар? Напоминания
 
+<<<<<<< HEAD
+    public static void buttonChange(TelegramBot bot, Long userId) {
+        user.setUsersCurrentBotState(userId, BotState.BUTTON_CHANGE);
+        ServiceForDay.selectionDay(userId, user, bot);
+=======
     public void buttonChoice(Update update) {
         //TODO полученние названий из SQL
         if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE) {
@@ -126,6 +146,7 @@ public class Runner {
             user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
         }
         return;
+>>>>>>> parent of 5108b91 (Work with button change)
     }
 
 
@@ -151,11 +172,16 @@ public class Runner {
         if (update.message() != null && text.equals("/add")) return MessageType.ADD;
         if (update.message() != null && text.equals("/change")) return MessageType.CHANGE;
         if (update.message() != null && text.equals("/choice")) return MessageType.CHOICE;
+<<<<<<< HEAD
+        if (update.message() != null && userStatus == BotState.BUTTON_CHANGE) return MessageType.CHANGE_TABLE;
+        if (update.message() != null && userStatus == BotState.CHANGE_SCHEDULE) return MessageType.CHANGE_TABLE;
+=======
+>>>>>>> parent of 5108b91 (Work with button change)
         if (update.message() != null && userStatus == BotState.BUTTON_CHOICE) return MessageType.CHOICE_TABLENAME;
         if (update.message() != null && userStatus == BotState.SET_ACTUAL_TABLENAME) return MessageType.CHOICE;
         if (update.message() != null && userStatus == BotState.WAIT_CHANGE_DAY) return MessageType.CHANGE_DAY;
         if (update.message() != null && userStatus == BotState.END) return MessageType.END;
-        if (update.message() != null) return MessageType.MESSAGE;
+        if (update.message() != null || userStatus == BotState.DAY_RECEIVED) return MessageType.MESSAGE;
         if (update.myChatMember() != null) return MessageType.CHAT_MEMBER;
         if (update.callbackQuery() != null) return MessageType.CALLBACK_QUERY;
         return MessageType.UNSUPPORTED;
