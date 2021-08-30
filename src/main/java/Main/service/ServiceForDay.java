@@ -20,16 +20,13 @@ public class ServiceForDay implements Service {
     private static Map<Long, Set<String>> daysButton = new LinkedHashMap<>();
 
     public static void selectionDay(Long idMessage, @NotNull TelegramUser user, TelegramBot bot) {
-        if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY) {
+        if (user.getUsersCurrentBotState(idMessage) == BotState.WAIT_CHANGE_DAY
+                || user.getUsersCurrentBotState(idMessage) == BotState.BUTTON_CHANGE) {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("")
                     .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
             daysButton.get(idMessage).forEach(el -> replyKeyboardMarkup.addRow(el));
             replyKeyboardMarkup.addRow("Завершить");
-<<<<<<< HEAD
             bot.execute(new SendMessage(idMessage, "С каким днём будем работать?").replyMarkup(replyKeyboardMarkup));
-=======
-            bot.execute(new SendMessage(idMessage, "Какой день недели будем заполнять?").replyMarkup(replyKeyboardMarkup));
->>>>>>> parent of 5108b91 (Work with button change)
         }
     }
 
@@ -37,43 +34,43 @@ public class ServiceForDay implements Service {
         Long userID = update.message().from().id();
         if (update.message() != null && user.getUsersCurrentBotState(userID) == BotState.WAIT_CHANGE_DAY) {
             for (String list : daysButton.get(userID)) {
-                if (list.equals(text)) {
+                if (list.equals(text) && text.equals("Понедельник")) {
                     user.setUsersCurrentDayState(userID, DayState.MONDAY);
                     user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                     daysButton.get(userID).remove(text);
                     break;
                 }
-                if (list.equals(text)) {
+                if (list.equals(text) && text.equals("Вторник")) {
                     user.setUsersCurrentDayState(userID, DayState.TUESDAY);
                     user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                     daysButton.get(userID).remove(text);
                     break;
                 }
-                if (list.equals(text)) {
+                if (list.equals(text) && text.equals("Среда")) {
                     user.setUsersCurrentDayState(userID, DayState.WEDNESDAY);
                     user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                     daysButton.get(userID).remove(text);
                     break;
                 }
-                if (list.equals(text)) {
+                if (list.equals(text) && text.equals("Четверг")) {
                     user.setUsersCurrentDayState(userID, DayState.THURSDAY);
                     user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                     daysButton.get(userID).remove(text);
                     break;
                 }
-                if (list.equals(text)) {
+                if (list.equals(text) && text.equals("Пятница")) {
                     user.setUsersCurrentDayState(userID, DayState.FRIDAY);
                     user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                     daysButton.get(userID).remove(text);
                     break;
                 }
-                if (list.equals(text)) {
+                if (list.equals(text) && text.equals("Суббота")) {
                     user.setUsersCurrentDayState(userID, DayState.SATURDAY);
                     user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                     daysButton.get(userID).remove(text);
                     break;
                 }
-                if (list.equals(text)) {
+                if (list.equals(text) && text.equals("Воскресенье")) {
                     user.setUsersCurrentDayState(userID, DayState.SUNDAY);
                     user.setUsersCurrentBotState(userID, BotState.DAY_RECEIVED);
                     daysButton.get(userID).remove(text);

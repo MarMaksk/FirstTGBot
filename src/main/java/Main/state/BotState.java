@@ -7,11 +7,8 @@ public enum BotState {
     BUTTON_ADD,
     BUTTON_AWEEK,
     BUTTON_CHOICE,
-<<<<<<< HEAD
     BUTTON_CHANGE,
     CHANGE_SCHEDULE,
-=======
->>>>>>> parent of 5108b91 (Work with button change)
     SET_ACTUAL_TABLENAME,
     END
 }

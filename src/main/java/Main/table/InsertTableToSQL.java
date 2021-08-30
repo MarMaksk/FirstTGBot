@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AddTableToSQL extends OperationSQL {
+public class InsertTableToSQL extends OperationSQL {
     private static final String INSERT_MONDAY = "INSERT INTO tb_monday(\n" +
             "\ttb_user_id, tb_name, tb_one, tb_two, tb_three, tb_four, tb_five, tb_six, tb_seven, tb_eight, tb_nine, tb_public)\n" +
             "\tVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -48,9 +48,9 @@ public class AddTableToSQL extends OperationSQL {
             con.setAutoCommit(false);
             try {
                 stmt.setLong(1, idUserMessage);
-                stmt.setString(2, tableName);
+                stmt.setString(2, TablenameSQL.getActualTablename(idUserMessage));
                 for (int i = oneDay.size() + 2; i > 2; i--)
-                    stmt.setString(i, oneDay.get(i-3));
+                    stmt.setString(i, oneDay.get(i - 3));
                 for (int i = oneDay.size() + 3; i < 12; i++)
                     stmt.setString(i, "empty");
                 stmt.setBoolean(12, false);
