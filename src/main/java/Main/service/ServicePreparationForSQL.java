@@ -1,6 +1,7 @@
 package Main.service;
 
 import Main.state.BotState;
+import Main.state.ExtremHelpEnum;
 import Main.table.InsertTableToSQL;
 import Main.table.TableOfOneDay;
 import Main.table.UpdateTableToSQL;
@@ -27,16 +28,11 @@ public class ServicePreparationForSQL implements Service {
                 return;
             } else if (couplesPerDay.get(idUserMessage) == counter.get(idUserMessage)) {
                 TableOfOneDay.setOneDay(idUserMessage, update.message().text());
-                if (user.getUsersCurrentBotState(idUserMessage) == BotState.DAY_RECEIVED)
+                if (user.getUsersCurrentBotState(idUserMessage) == BotState.DAY_RECEIVED &&
+                        user.getUsersCurrentExtremeState(idUserMessage) != ExtremHelpEnum.EXTREME_PARAM_ONE)
                     InsertTableToSQL.createNewTable(idUserMessage, user, TableOfOneDay.getListOfOneDay(idUserMessage), null);
                 else
                     UpdateTableToSQL.setDay(bot, update, user, TableOfOneDay.getListOfOneDay(idUserMessage));
-//                if (user.getUsersCurrentBotState(idUserMessage) != BotState.CHANGE_SCHEDULE&&
-//                user.getUsersCurrentBotState(idUserMessage)!=BotState.BUTTON_CHANGE) {
-//                    user.setUsersCurrentBotState(idUserMessage, BotState.WAIT_CHANGE_DAY);
-//                    ServiceForDay.selectionDay(idUserMessage, user, bot);
-//                }
-                //InsertTableToSQL.createNewTable(idUserMessage, user, TableOfOneDay.getListOfOneDay(idUserMessage), null);
                 user.setUsersCurrentBotState(idUserMessage, BotState.WAIT_CHANGE_DAY);
                 ServiceForDay.selectionDay(idUserMessage, user, bot);
                 TableOfOneDay.removeUserList(idUserMessage);

@@ -1,8 +1,8 @@
 package Main.table;
 
-import Main.Runner;
 import Main.state.BotState;
 import Main.state.DayState;
+import Main.state.ExtremHelpEnum;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -50,7 +50,8 @@ public class UpdateTableToSQL {
                 InsertTableToSQL.createNewTable(userId, user, oneDay, null);
             }
             bot.execute(new SendMessage(userId, "Расписание изменено"));
-            Runner.buttonChange(bot, userId);
+            //Runner.buttonChange(bot, userId);
+            user.setUsersCurrentExtremeState(userId, ExtremHelpEnum.EXTREME_PARAM_ONE);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -93,38 +94,30 @@ public class UpdateTableToSQL {
     public static void preparationDayForUpdate(TelegramBot bot, TelegramUser user, String text, Long userId) {
         // PreparedStatement stmt = null;
         if (user.getUsersCurrentBotState(userId) == BotState.BUTTON_CHANGE) {
-            if (text.equals("понедельник")) {
-                //    stmt = con.prepareStatement(UPDATE_MONDAY);
+            if (text.equals("понедельник"))
                 user.setUsersCurrentDayState(userId, DayState.MONDAY);
-            }
-            if (text.equals("вторник")) {
-                //   stmt = con.prepareStatement(UPDATE_TUESDAY);
+
+            if (text.equals("вторник"))
                 user.setUsersCurrentDayState(userId, DayState.TUESDAY);
-            }
-            if (text.equals("среда")) {
-                //    stmt = con.prepareStatement(UPDATE_WEDNESDAY);
+
+            if (text.equals("среда"))
                 user.setUsersCurrentDayState(userId, DayState.WEDNESDAY);
-            }
-            if (text.equals("четверг")) {
-                //    stmt = con.prepareStatement(UPDATE_THURSDAY);
+
+            if (text.equals("четверг"))
                 user.setUsersCurrentDayState(userId, DayState.THURSDAY);
-            }
-            if (text.equals("пятница")) {
-                //    stmt = con.prepareStatement(UPDATE_FRIDAY);
+
+            if (text.equals("пятница"))
                 user.setUsersCurrentDayState(userId, DayState.FRIDAY);
-            }
-            if (text.equals("суббота")) {
-                //    stmt = con.prepareStatement(UPDATE_SATURDAY);
+
+            if (text.equals("суббота"))
                 user.setUsersCurrentDayState(userId, DayState.SATURDAY);
-            }
-            if (text.equals("воскресенье")) {
-                //    stmt = con.prepareStatement(UPDATE_SUNDAY);
+
+            if (text.equals("воскресенье"))
                 user.setUsersCurrentDayState(userId, DayState.SUNDAY);
-            }
+
             user.setUsersCurrentBotState(userId, BotState.CHANGE_SCHEDULE);
             ReplyKeyboardRemove rkr = new ReplyKeyboardRemove();
             bot.execute(new SendMessage(userId, "Сколько будет пар?").replyMarkup(rkr));
-            //  return stmt;
         }
     }
 

@@ -2,18 +2,32 @@ package Main.user;
 
 import Main.state.BotState;
 import Main.state.DayState;
+import Main.state.ExtremHelpEnum;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TelegramUser {
     private static Map<Long, BotState> usersBotStates = new HashMap<>();
+    private static Map<Long, ExtremHelpEnum> usersExtStates = new HashMap<>();
     private static Map<Long, DayState> usersDayStates = new HashMap<>();
     private static Map<Long, UserProfileData> usersProfileData = new HashMap<>();
 
 
     public void setUsersCurrentBotState(Long userId, BotState botState) {
         usersBotStates.put(userId, botState);
+    }
+
+    public ExtremHelpEnum getUsersCurrentExtremeState(Long userId) {
+        ExtremHelpEnum exh = usersExtStates.get(userId);
+        if (exh == null) {
+            exh = ExtremHelpEnum.WAIT_PARAM;
+        }
+        return exh;
+    }
+
+    public void setUsersCurrentExtremeState(Long userId, ExtremHelpEnum exh) {
+        usersExtStates.put(userId, exh);
     }
 
     public BotState getUsersCurrentBotState(Long userId) {
@@ -35,7 +49,6 @@ public class TelegramUser {
     public static void setUsersCurrentDayState(Long userId, DayState dayState) {
         usersDayStates.put(userId, dayState);
     }
-
 
 
     public UserProfileData getUserProfileData(Long userId) {
