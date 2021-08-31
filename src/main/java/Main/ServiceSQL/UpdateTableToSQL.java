@@ -1,4 +1,4 @@
-package Main.table;
+package Main.ServiceSQL;
 
 import Main.state.BotState;
 import Main.state.DayState;
@@ -51,7 +51,6 @@ public class UpdateTableToSQL {
                 InsertTableToSQL.createNewTable(userId, user, oneDay, null);
             }
             bot.execute(new SendMessage(userId, "Расписание изменено"));
-            //Runner.buttonChange(bot, userId);
             user.setUsersCurrentExtremeState(userId, ExtremHelpEnum.EXTREME_PARAM_ONE);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -93,7 +92,6 @@ public class UpdateTableToSQL {
     }
 
     public static void preparationDayForUpdate(TelegramBot bot, TelegramUser user, String text, Long userId) {
-        // PreparedStatement stmt = null;
         if (user.getUsersCurrentBotState(userId) == BotState.BUTTON_CHANGE) {
             if (text.equals("понедельник"))
                 user.setUsersCurrentDayState(userId, DayState.MONDAY);

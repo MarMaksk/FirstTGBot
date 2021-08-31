@@ -1,9 +1,9 @@
 package Main.service;
 
+import Main.ServiceSQL.CorrectScheduleSQL;
+import Main.ServiceSQL.SelectTableFromSQL;
+import Main.ServiceSQL.TablenameSQL;
 import Main.state.BotState;
-import Main.table.CorrectScheduleSQL;
-import Main.table.SelectTableFromSQL;
-import Main.table.TablenameSQL;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -14,6 +14,9 @@ import com.pengrad.telegrambot.request.SendMessage;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 
@@ -78,6 +81,150 @@ public class ServiceForButton implements Service {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         Locale localeRu = new Locale("ru", "RU");
         return dayOfWeek.getDisplayName(TextStyle.FULL, localeRu);
+    }
+
+    public static void buttonNow(TelegramBot bot, Long userId) {
+        List<String> schedule = new ArrayList<>();
+        try {
+            schedule = SelectTableFromSQL.getListOfSchedule(userId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        schedule.remove(0);
+        if (schedule.isEmpty()) {
+            System.out.println("На это время нет пар");
+            return;
+        }
+        List<String> correct = CorrectScheduleSQL.SelectCorrectSchedule(userId);
+        if (correct.isEmpty()) {
+            bot.execute(new SendMessage(userId, "Для начала следует скорректировать расписание"));
+            return;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("H:mm")
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault());
+        LocalTime timeNow = LocalTime.now();
+        LocalTime timePair = LocalTime.parse(correct.get(0), formatter);
+        LocalTime timeStart = LocalTime.parse(correct.get(1), formatter);
+        LocalTime timeChange = LocalTime.parse("0:" + correct.get(4), formatter);
+        LocalTime firstPair = timeStart.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute());
+        LocalTime secondPair = firstPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
+        LocalTime thirdPair;
+        LocalTime fourthPair;
+        if (Integer.valueOf(correct.get(3)) == 2) {
+            thirdPair = secondPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute()).plusMinutes(Integer.valueOf(correct.get(2)));
+            fourthPair = thirdPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute()).minusMinutes(timeChange.getMinute());
+        } else {
+            thirdPair = secondPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
+            fourthPair = thirdPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute()).plusMinutes(Integer.valueOf(correct.get(2))).minusMinutes(timeChange.getMinute());
+        }
+        LocalTime timeChangeAfterFourthPair = LocalTime.parse("0:" + correct.get(5), formatter);
+        LocalTime fifthPair = fourthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime sixthPair = fifthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime seventhPair = sixthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime eigthPair = seventhPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime ninthPair = eigthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        //pos нужен чтобы можно было переиспользовать код для нахождения следующей пары
+        int pos = 0;
+        String messege = getPair(schedule, timeNow, timeStart, firstPair, secondPair, thirdPair, fourthPair, fifthPair, sixthPair, seventhPair, eigthPair, ninthPair, pos);
+        bot.execute(new SendMessage(userId, messege));
+        return;
+    }
+
+    public static void buttonNext(TelegramBot bot, Long userId) {
+        List<String> schedule = new ArrayList<>();
+        try {
+            schedule = SelectTableFromSQL.getListOfSchedule(userId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        schedule.remove(0);
+        if (schedule.isEmpty()) {
+            System.out.println("На это время нет пар");
+            return;
+        }
+        List<String> correct = CorrectScheduleSQL.SelectCorrectSchedule(userId);
+        if (correct.isEmpty()) {
+            bot.execute(new SendMessage(userId, "Для начала следует скорректировать расписание"));
+            return;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("H:mm")
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault());
+        LocalTime timeNow = LocalTime.now();
+        LocalTime timePair = LocalTime.parse(correct.get(0), formatter);
+        LocalTime timeStart = LocalTime.parse(correct.get(1), formatter);
+        LocalTime timeChange = LocalTime.parse("0:" + correct.get(4), formatter);
+        LocalTime firstPair = timeStart.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute());
+        LocalTime secondPair = firstPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
+        LocalTime thirdPair;
+        LocalTime fourthPair;
+        if (Integer.valueOf(correct.get(3)) == 2) {
+            thirdPair = secondPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute()).plusMinutes(Integer.valueOf(correct.get(2)));
+            fourthPair = thirdPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute()).minusMinutes(timeChange.getMinute());
+        } else {
+            thirdPair = secondPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
+            fourthPair = thirdPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute()).plusMinutes(Integer.valueOf(correct.get(2))).minusMinutes(timeChange.getMinute());
+        }
+        LocalTime timeChangeAfterFourthPair = LocalTime.parse("0:" + correct.get(5), formatter);
+        LocalTime fifthPair = fourthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime sixthPair = fifthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime seventhPair = sixthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime eigthPair = seventhPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime ninthPair = eigthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        //pos нужен чтобы можно было переиспользовать код для нахождения следующей пары
+        int pos = 1;
+        String messege = getPair(schedule, timeNow, timeStart, firstPair, secondPair, thirdPair, fourthPair, fifthPair, sixthPair, seventhPair, eigthPair, ninthPair, pos);
+        bot.execute(new SendMessage(userId, messege));
+        return;
+    }
+
+    private static String getPair(List<String> schedule, LocalTime timeNow, LocalTime timeStart, LocalTime firstPair, LocalTime secondPair, LocalTime thirdPair, LocalTime fourthPair, LocalTime fifthPair, LocalTime sixthPair, LocalTime seventhPair, LocalTime eigthPair, LocalTime ninthPair, int pos) {
+        String messege;
+        String pairNone = "На это время нет пар";
+        int size = schedule.size();
+        if (timeNow.isAfter(timeStart) &&
+                timeNow.isBefore(firstPair) &&
+                pos != size) {
+            messege = schedule.get(pos + 0);
+        } else if (timeNow.isAfter(firstPair) &&
+                timeNow.isBefore(secondPair) &&
+                pos + 1 < size) {
+            messege = schedule.get(pos + 1);
+        } else if (timeNow.isAfter(secondPair) &&
+                timeNow.isBefore(thirdPair) &&
+                pos + 2 < size) {
+            messege = schedule.get(pos + 2);
+        } else if (timeNow.isAfter(thirdPair) &&
+                timeNow.isBefore(fourthPair) &&
+                pos + 3 < size) {
+            messege = schedule.get(pos + 3);
+        } else if (timeNow.isAfter(fourthPair) &&
+                timeNow.isBefore(fifthPair) &&
+                pos + 4 < size) {
+            messege = schedule.get(pos + 4);
+        } else if (timeNow.isAfter(fifthPair) &&
+                timeNow.isBefore(sixthPair) &&
+                pos + 5 < size) {
+            messege = schedule.get(pos + 5);
+        } else if (timeNow.isAfter(sixthPair) &&
+                timeNow.isBefore(seventhPair) &&
+                pos + 6 < size) {
+            messege = schedule.get(pos + 6);
+        } else if (timeNow.isAfter(seventhPair) &&
+                timeNow.isBefore(eigthPair) &&
+                pos + 7 < size) {
+            messege = schedule.get(7);
+        } else if (timeNow.isAfter(eigthPair) &&
+                timeNow.isBefore(ninthPair) &&
+                pos + 8 < size) {
+            messege = schedule.get(pos + 8);
+        } else {
+            messege = pairNone;
+        }
+        return messege;
     }
 
     public static class Correct {
@@ -164,7 +311,6 @@ public class ServiceForButton implements Service {
                 user.setUsersCurrentBotState(userId, BotState.WAIT_STATUS);
                 bot.execute(new SendMessage(userId, "Настройка завершена"));
             }
-
         }
     }
 }

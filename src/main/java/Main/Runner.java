@@ -1,28 +1,21 @@
 package Main;
 
+import Main.ServiceSQL.TablenameSQL;
+import Main.ServiceSQL.UpdateTableToSQL;
 import Main.service.ServiceForButton;
 import Main.service.ServiceForDay;
 import Main.service.ServiceForStatus;
 import Main.service.ServicePreparationForSQL;
 import Main.state.BotState;
 import Main.state.MessageType;
-import Main.table.SelectTableFromSQL;
 import Main.table.Tablename;
-import Main.table.TablenameSQL;
-import Main.table.UpdateTableToSQL;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 
-import java.sql.SQLException;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 public class Runner {
@@ -58,9 +51,10 @@ public class Runner {
                                         invokeChatMember(update);
                                         return;
                                     case NOW:
-                                        buttonNow(idUserMessage);
+                                        ServiceForButton.buttonNow(bot, idUserMessage);
                                         return;
                                     case NEXT:
+                                        ServiceForButton.buttonNext(bot, idUserMessage);
                                         return;
                                     case TODAY:
                                         ServiceForButton.buttonToday(bot, idUserMessage);
@@ -121,81 +115,7 @@ public class Runner {
     }
 
     //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
-    // TODO А если я напишу на убранный понедельник понедельник? Сколько может быть пар? Напоминания
-    public static void buttonNow(Long userId) {
-        List<String> schedule = new ArrayList<>();
-        try {
-            schedule = SelectTableFromSQL.getListOfSchedule(userId);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        schedule.remove(0);
-        if (schedule.isEmpty()) {
-            System.out.println("На это время нет пар");
-            return;
-        }
-        DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("H:mm")
-                .withLocale(Locale.getDefault())
-                .withZone(ZoneId.systemDefault());
-        LocalTime timeNow = LocalTime.now();
-        LocalTime timeStart = LocalTime.parse("8:00", formatter).minusMinutes(1);
-        LocalTime timePair = LocalTime.parse("1:30", formatter);
-        LocalTime timeChange = LocalTime.parse("0:" + "15", formatter);
-        LocalTime firstPair = timeStart.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute());
-        LocalTime secondPair = firstPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
-        LocalTime thirdPair = secondPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
-        LocalTime fourthPair = thirdPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
-        LocalTime timeChangeAfterFourthPair = LocalTime.parse("0:" + "10", formatter);
-        LocalTime fifthPair = fourthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
-        LocalTime sixthPair = fifthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
-        LocalTime seventhPair = sixthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
-        LocalTime eigthPair = seventhPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
-        LocalTime ninthPair = eigthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
-        String pairNone = "На это время нет пар";
-        int size = schedule.size();
-        String messege = null;
-        if (timeNow.isAfter(timeStart) &&
-                timeNow.isBefore(firstPair)) {
-            messege = schedule.get(0);
-        } else if (timeNow.isAfter(firstPair) &&
-                timeNow.isBefore(secondPair) &&
-                1 < size) {
-            messege = schedule.get(1);
-        } else if (timeNow.isAfter(secondPair) &&
-                timeNow.isBefore(thirdPair) &&
-                2 < size) {
-            messege = schedule.get(2);
-        } else if (timeNow.isAfter(thirdPair) &&
-                timeNow.isBefore(fourthPair) &&
-                3 < size) {
-            messege = schedule.get(3);
-        } else if (timeNow.isAfter(fourthPair) &&
-                timeNow.isBefore(fifthPair) &&
-                4 < size) {
-            messege = schedule.get(4);
-        } else if (timeNow.isAfter(fifthPair) &&
-                timeNow.isBefore(sixthPair) &&
-                5 < size) {
-            messege = schedule.get(5);
-        } else if (timeNow.isAfter(sixthPair) &&
-                timeNow.isBefore(seventhPair) &&
-                6 < size) {
-            messege = schedule.get(6);
-        } else if (timeNow.isAfter(seventhPair) &&
-                timeNow.isBefore(eigthPair) &&
-                7 < size) {
-            messege = schedule.get(7);
-        } else if (timeNow.isAfter(eigthPair) &&
-                timeNow.isBefore(ninthPair) &&
-                8 < size) {
-            messege = schedule.get(8);
-        } else {
-            messege = pairNone;
-        }
-        bot.execute(new SendMessage(userId, messege));
-        return;
-    }
+
 
     private void invokeChatMember(Update update) {
         bot.execute(new SendMessage(update.message().chat().id(), "Когда-то когда человечество от  ̶g̶̶̶a̶̶̶r̶̶̶b̶̶̶a̶̶̶g̶̶̶e̶̶̶ ̶̶̶c̶̶̶o̶̶̶l̶̶̶l̶̶̶e̶̶̶c̶̶̶t̶̶̶o̶̶̶r̶̶̶ ̶̶̶б̶̶̶ы̶̶̶л̶̶̶о̶̶̶ ̶̶̶с̶̶̶п̶̶̶а̶̶̶с̶̶̶е̶̶̶н̶̶̶о̶̶̶ ̶̶̶п̶̶̶е̶̶̶р̶̶̶е̶̶̶о̶̶̶п̶̶̶р̶̶̶е̶̶̶д̶̶̶е̶̶̶л̶̶̶ё̶̶̶н̶̶̶н̶̶̶ы̶̶̶м̶̶̶ ̶̶̶м̶̶̶е̶̶̶т̶̶̶о̶̶̶д̶̶̶о̶̶̶м̶̶̶ ̶̶̶f̶̶̶i̶̶̶n̶̶̶a̶̶̶l̶̶̶i̶̶̶z̶̶̶e̶̶ " +

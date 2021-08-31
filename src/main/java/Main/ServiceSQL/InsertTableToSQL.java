@@ -1,4 +1,4 @@
-package Main.table;
+package Main.ServiceSQL;
 
 
 import Main.state.DayState;

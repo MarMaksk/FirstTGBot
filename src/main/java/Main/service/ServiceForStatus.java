@@ -1,7 +1,7 @@
 package Main.service;
 
 
-import Main.table.SelectTableFromSQL;
+import Main.ServiceSQL.SelectTableFromSQL;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;

@@ -1,10 +1,10 @@
 package Main.service;
 
+import Main.ServiceSQL.InsertTableToSQL;
+import Main.ServiceSQL.UpdateTableToSQL;
 import Main.state.BotState;
 import Main.state.ExtremHelpEnum;
-import Main.table.InsertTableToSQL;
 import Main.table.TableOfOneDay;
-import Main.table.UpdateTableToSQL;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;

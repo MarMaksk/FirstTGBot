@@ -1,5 +1,6 @@
 package Main.table;
 
+import Main.ServiceSQL.TablenameSQL;
 import Main.service.ServiceForDay;
 import Main.state.BotState;
 import Main.user.TelegramUser;
