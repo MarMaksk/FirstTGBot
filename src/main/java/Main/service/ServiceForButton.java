@@ -26,9 +26,10 @@ public class ServiceForButton implements Service {
         user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_ADD);
     }
 
-    public static void buttonAWeek(Long userId, TelegramBot bot) {
+    public static String buttonAWeek(Long userId, TelegramBot bot) {
         String weekSchedule = SelectTableFromSQL.getScheduleAWeek(userId);
         bot.execute(new SendMessage(userId, weekSchedule));
+        return weekSchedule;
     }
 
     public static void buttonChange(TelegramBot bot, TelegramUser user, Long userId) {
@@ -40,7 +41,7 @@ public class ServiceForButton implements Service {
         if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE ||
                 user.getUsersCurrentBotState(update.message().chat().id()) == BotState.BUTTON_DELETE) {
             List<String> listTablename = TablenameSQL.getExistingTablename(update.message().chat().id());
-            if (listTablename.isEmpty()){
+            if (listTablename.isEmpty()) {
                 bot.execute(new SendMessage(update.message().chat().id(), "Для начала нужно добавить расписание"));
                 return;
             }

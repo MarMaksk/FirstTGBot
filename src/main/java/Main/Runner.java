@@ -159,6 +159,7 @@ public class Runner {
         if (update.message() != null && text.equals("/choice")) return MessageType.CHOICE;
         if (update.message() != null && text.equals("/correct")) return MessageType.CORRECT;
         if (update.message() != null && text.equals("/delete")) return MessageType.DELETE;
+        if (update.message() != null && userStatus == BotState.BUTTON_ADD) return MessageType.MESSAGE;
         if (update.message() != null && userStatus == BotState.BUTTON_DELETE) return MessageType.DELETE_TWO;
         if (update.message() != null && userStatus == BotState.BUTTON_CHANGE) return MessageType.CHANGE_TABLE;
         if (update.message() != null && userStatus == BotState.CHANGE_SCHEDULE) return MessageType.CHANGE_TABLE;

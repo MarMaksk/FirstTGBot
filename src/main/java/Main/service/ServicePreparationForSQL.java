@@ -24,7 +24,12 @@ public class ServicePreparationForSQL implements Service {
                 user.getUsersCurrentBotState(idUserMessage) == BotState.CHANGE_SCHEDULE) {
             if (!couplesPerDay.containsKey(idUserMessage)) {
                 counter.put(idUserMessage, 1);
-                couplesPerDay.put(idUserMessage, Integer.valueOf(update.message().text()));
+                try {
+                    couplesPerDay.put(idUserMessage, Integer.valueOf(update.message().text()));
+                } catch (NumberFormatException ex){
+                    bot.execute(new SendMessage(idUserMessage, "Ожидается число"));
+                    return;
+                }
                 bot.execute(new SendMessage(idUserMessage, "Какой будет " + counter.get(idUserMessage) + " пара?" +
                         "\n Подсказка: можно приписать аудиторию"));
                 return;
@@ -49,6 +54,8 @@ public class ServicePreparationForSQL implements Service {
             }
         }
     }
+
+
     public static void preparationDayForUpdate(TelegramBot bot, TelegramUser user, String text, Long userId) {
         if (user.getUsersCurrentBotState(userId) == BotState.BUTTON_CHANGE) {
             if (text.equals("понедельник"))

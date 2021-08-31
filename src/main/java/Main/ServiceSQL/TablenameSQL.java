@@ -33,7 +33,7 @@ public class TablenameSQL extends OperationSQL {
             stmt.setLong(1, userId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next())
-            tablename = rs.getString("tb_tablename").replace(userId+"", "");
+                tablename = rs.getString("tb_tablename").replace(userId + "", "");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -56,17 +56,17 @@ public class TablenameSQL extends OperationSQL {
                     return;
                 }
                 boolean resultUpdate = true;
-                PreparedStatement stmt = con.prepareStatement(UPDATE_ACTUAL_TABLENAME);
+                PreparedStatement stmt = con.prepareStatement(INSERT_ACTUAL_TABLENAME);
+                ;
                 con.setAutoCommit(false);
                 try {
                     writeTablenameToTable(idUserMessage, tableName, con, stmt);
                 } catch (SQLException ex) {
                     con.rollback();
                     resultUpdate = false;
-                    ex.printStackTrace();
                 }
                 if (!resultUpdate) {
-                    stmt = con.prepareStatement(INSERT_ACTUAL_TABLENAME);
+                    stmt = con.prepareStatement(UPDATE_ACTUAL_TABLENAME);
                     try {
                         writeTablenameToTable(idUserMessage, tableName, con, stmt);
                     } catch (SQLException ex) {
