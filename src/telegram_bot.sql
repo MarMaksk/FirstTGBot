@@ -141,11 +141,12 @@ CREATE TABLE tb_users_actual_table_name
 );
 CREATE TABLE tb_user_schedule_time
 (
-    tb_user_id          integer,
-    tb_time_start       varchar(5),
-    tb_time_lunch       varchar(5),
-    tb_lunch_after      integer,
-    tb_time_change      varchar(5),
-    tb_time_fourth_pair varchar(5),
+    tb_user_id                 integer,
+    tb_pair_length             varchar(5),
+    tb_time_start              varchar(5),
+    tb_time_lunch              varchar(5),
+    tb_lunch_after             varchar(5),
+    tb_time_change             varchar(5),
+    tb_time_change_fourth_pair varchar(5),
     PRIMARY KEY (tb_user_id)
 )

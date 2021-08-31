@@ -1,6 +1,7 @@
 package Main.service;
 
 import Main.state.BotState;
+import Main.table.CorrectScheduleSQL;
 import Main.table.SelectTableFromSQL;
 import Main.table.TablenameSQL;
 import Main.user.TelegramUser;
@@ -14,8 +15,7 @@ import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class ServiceForButton implements Service {
     public static void buttonAdd(Update update, TelegramUser user, TelegramBot bot) {
@@ -57,23 +57,114 @@ public class ServiceForButton implements Service {
     }
 
     public static void buttonToday(TelegramBot bot, Long userId) {
-        sentToUserDay(bot, userId, 0l);
+        String res = sentToUserDay(bot, userId, 0l);
     }
 
-    private static void sentToUserDay(TelegramBot bot, Long userId, Long day) {
+    private static String sentToUserDay(TelegramBot bot, Long userId, Long day) {
+        String res = null;
         try {
             String dayOfWeek = getDaysOfAWeek(day);
-            String res = SelectTableFromSQL.getScheduleForDayOfWeek(userId, dayOfWeek);
+            List<String> ls = new ArrayList<>();
+            res = SelectTableFromSQL.getScheduleForDayOfWeek(userId, dayOfWeek, ls);
             bot.execute(new SendMessage(userId, "Расписание на " + (res.isEmpty() ? dayOfWeek : res)));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        return res;
     }
 
-    private static String getDaysOfAWeek(Long day) {
+    public static String getDaysOfAWeek(Long day) {
         LocalDate date = LocalDate.now().plusDays(day);
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         Locale localeRu = new Locale("ru", "RU");
         return dayOfWeek.getDisplayName(TextStyle.FULL, localeRu);
+    }
+
+    public static class Correct {
+        private static Map<Long, Integer> correctStep = new HashMap<>();
+        private static Map<Long, List<String>> scheduleTime = new HashMap();
+
+        public static void buttonCorrect(Update update, TelegramBot bot, TelegramUser user, Long userId) {
+            user.setUsersCurrentBotState(userId, BotState.BUTTON_CORRECT);
+
+            String text = update.message().text();
+            if (correctStep.get(userId) == null) {
+                correctStep.put(userId, 6);
+                scheduleTime.put(userId, new ArrayList<>());
+            } else if (update.message().text().equals("/correct")) {
+                correctStep.replace(userId, 6);
+                scheduleTime.remove(userId);
+                scheduleTime.put(userId, new ArrayList<>());
+            }
+            if (correctStep.get(userId) == 6) {
+                bot.execute(new SendMessage(userId, "Настройки можно сменить в любой момент \n" +
+                        "Сколько длятся пары с учётом перерыва во время пары (если он есть)?\n" +
+                        "Ответ должен быть вида H:MM\n" +
+                        "Пример: 1:35"));
+                correctStep.replace(userId, 5);
+            } else if (correctStep.get(userId) == 5) {
+                if (!text.matches("\\d[:][0-6]\\d")) {
+                    bot.execute(new SendMessage(userId, "Неправильный формат сообщения"));
+                    return;
+                }
+                scheduleTime.get(userId).add(text);
+                correctStep.replace(userId, 4);
+                bot.execute(new SendMessage(userId, "Во сколько начинаются пары?\n" +
+                        "Ответ должен быть вида H:MM\n" +
+                        "Пример: 8:30"));
+            } else if (correctStep.get(userId) == 4) {
+                if (!text.matches("\\d[:][0-6]\\d")) {
+                    bot.execute(new SendMessage(userId, "Неправильный формат сообщения"));
+                    return;
+                }
+                scheduleTime.get(userId).add(text);
+                correctStep.replace(userId, 3);
+                bot.execute(new SendMessage(userId, "Сколько длится обед?\n" +
+                        "Ответ должен быть в минутах\n" +
+                        "Пример: 45"));
+                return;
+            } else if (correctStep.get(userId) == 3) {
+                if (!text.matches("\\d\\d") && !text.matches("\\d")) {
+                    bot.execute(new SendMessage(userId, "Неправильный формат сообщения"));
+                    return;
+                }
+                scheduleTime.get(userId).add(text);
+                correctStep.replace(userId, 2);
+                bot.execute(new SendMessage(userId, "После какой пары обед?"));
+                return;
+            } else if (correctStep.get(userId) == 2) {
+                if (!text.matches("\\d")) {
+                    bot.execute(new SendMessage(userId, "Неправильный формат сообщения"));
+                    return;
+                }
+                scheduleTime.get(userId).add(text);
+                correctStep.replace(userId, 1);
+                bot.execute(new SendMessage(userId, "Сколько длятся перемены?\n" +
+                        "Ответ должен быть в минутах"));
+            } else if (correctStep.get(userId) == 1) {
+                if (!text.matches("\\d\\d") && !text.matches("\\d")) {
+                    bot.execute(new SendMessage(userId, "Неправильный формат сообщения"));
+                    return;
+                }
+                scheduleTime.get(userId).add(text);
+                correctStep.replace(userId, 0);
+                bot.execute(new SendMessage(userId, "Сколько длятся пермены после четвертой пары?"));
+                return;
+            } else if (correctStep.get(userId) == 0) {
+                if (!text.matches("\\d\\d") && !text.matches("\\d")) {
+                    bot.execute(new SendMessage(userId, "Неправильный формат сообщения"));
+                    return;
+                }
+                scheduleTime.get(userId).add(text);
+                correctStep.remove(userId);
+                CorrectScheduleSQL.InsertUpdateCorrectSchedule(userId, scheduleTime.get(userId));
+                //TODO WRITE TO SQL
+                scheduleTime.get(userId).forEach(System.out::println);
+                scheduleTime.remove(userId);
+                user.setUsersCurrentBotState(userId, BotState.WAIT_STATUS);
+                bot.execute(new SendMessage(userId, "Настройка завершена"));
+            }
+
+        }
     }
 }

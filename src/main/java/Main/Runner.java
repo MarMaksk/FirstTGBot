@@ -6,6 +6,7 @@ import Main.service.ServiceForStatus;
 import Main.service.ServicePreparationForSQL;
 import Main.state.BotState;
 import Main.state.MessageType;
+import Main.table.SelectTableFromSQL;
 import Main.table.Tablename;
 import Main.table.TablenameSQL;
 import Main.table.UpdateTableToSQL;
@@ -15,12 +16,11 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -58,7 +58,7 @@ public class Runner {
                                         invokeChatMember(update);
                                         return;
                                     case NOW:
-                                        buttonNow();
+                                        buttonNow(idUserMessage);
                                         return;
                                     case NEXT:
                                         return;
@@ -93,6 +93,9 @@ public class Runner {
                                         Tablename.addTimetableName(update, idUserMessage, user, bot);
                                         ServicePreparationForSQL.preparationDayForWriting(update, update.message().from().id(), user, bot);
                                         return;
+                                    case CORRECT:
+                                        ServiceForButton.Correct.buttonCorrect(update, bot, user, idUserMessage);
+                                        return;
                                     case CHANGE_DAY:
                                         ServiceForDay.changeDay(update, update.message().text(), user, bot);
                                         return;
@@ -119,32 +122,79 @@ public class Runner {
 
     //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
     // TODO А если я напишу на убранный понедельник понедельник? Сколько может быть пар? Напоминания
-    public static void buttonNow() {
-        SimpleDateFormat sdf = new SimpleDateFormat("H");
-
-        //   Date date = sdf.parse("2");
+    public static void buttonNow(Long userId) {
+        List<String> schedule = new ArrayList<>();
+        try {
+            schedule = SelectTableFromSQL.getListOfSchedule(userId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        schedule.remove(0);
+        if (schedule.isEmpty()) {
+            System.out.println("На это время нет пар");
+            return;
+        }
         DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("HH:mm")
+                .ofPattern("H:mm")
                 .withLocale(Locale.getDefault())
                 .withZone(ZoneId.systemDefault());
-
-        Instant now = Instant.now();
-        LocalDateTime ld = LocalDateTime.now();
-        LocalTime l = LocalTime.now();
-        LocalTime lt = LocalTime.parse("22:00"); //Сюда вставить время начало из таблицы
-
-        if (l.isAfter(lt)) {
-            System.out.println(true);
+        LocalTime timeNow = LocalTime.now();
+        LocalTime timeStart = LocalTime.parse("8:00", formatter).minusMinutes(1);
+        LocalTime timePair = LocalTime.parse("1:30", formatter);
+        LocalTime timeChange = LocalTime.parse("0:" + "15", formatter);
+        LocalTime firstPair = timeStart.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute());
+        LocalTime secondPair = firstPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
+        LocalTime thirdPair = secondPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
+        LocalTime fourthPair = thirdPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChange.getMinute());
+        LocalTime timeChangeAfterFourthPair = LocalTime.parse("0:" + "10", formatter);
+        LocalTime fifthPair = fourthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime sixthPair = fifthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime seventhPair = sixthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime eigthPair = seventhPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        LocalTime ninthPair = eigthPair.plusHours(timePair.getHour()).plusMinutes(timePair.getMinute()).plusMinutes(timeChangeAfterFourthPair.getMinute());
+        String pairNone = "На это время нет пар";
+        int size = schedule.size();
+        String messege = null;
+        if (timeNow.isAfter(timeStart) &&
+                timeNow.isBefore(firstPair)) {
+            messege = schedule.get(0);
+        } else if (timeNow.isAfter(firstPair) &&
+                timeNow.isBefore(secondPair) &&
+                1 < size) {
+            messege = schedule.get(1);
+        } else if (timeNow.isAfter(secondPair) &&
+                timeNow.isBefore(thirdPair) &&
+                2 < size) {
+            messege = schedule.get(2);
+        } else if (timeNow.isAfter(thirdPair) &&
+                timeNow.isBefore(fourthPair) &&
+                3 < size) {
+            messege = schedule.get(3);
+        } else if (timeNow.isAfter(fourthPair) &&
+                timeNow.isBefore(fifthPair) &&
+                4 < size) {
+            messege = schedule.get(4);
+        } else if (timeNow.isAfter(fifthPair) &&
+                timeNow.isBefore(sixthPair) &&
+                5 < size) {
+            messege = schedule.get(5);
+        } else if (timeNow.isAfter(sixthPair) &&
+                timeNow.isBefore(seventhPair) &&
+                6 < size) {
+            messege = schedule.get(6);
+        } else if (timeNow.isAfter(seventhPair) &&
+                timeNow.isBefore(eigthPair) &&
+                7 < size) {
+            messege = schedule.get(7);
+        } else if (timeNow.isAfter(eigthPair) &&
+                timeNow.isBefore(ninthPair) &&
+                8 < size) {
+            messege = schedule.get(8);
+        } else {
+            messege = pairNone;
         }
-        lt = lt.plusHours(1).plusMinutes(30);
-        System.out.println(lt);
-        System.out.println(l);
-        String formatted = formatter.format(ld);
-        System.out.println(formatted);
-//            String fileName = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME);
-//            String fileNam1e = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-//            System.out.println(date);
-
+        bot.execute(new SendMessage(userId, messege));
+        return;
     }
 
     private void invokeChatMember(Update update) {
@@ -169,13 +219,15 @@ public class Runner {
         if (update.message() != null && text.equals("/add")) return MessageType.ADD;
         if (update.message() != null && text.equals("/change")) return MessageType.CHANGE;
         if (update.message() != null && text.equals("/choice")) return MessageType.CHOICE;
+        if (update.message() != null && text.equals("/correct")) return MessageType.CORRECT;
         if (update.message() != null && userStatus == BotState.BUTTON_CHANGE) return MessageType.CHANGE_TABLE;
         if (update.message() != null && userStatus == BotState.CHANGE_SCHEDULE) return MessageType.CHANGE_TABLE;
         if (update.message() != null && userStatus == BotState.BUTTON_CHOICE) return MessageType.CHOICE_TABLENAME;
         if (update.message() != null && userStatus == BotState.SET_ACTUAL_TABLENAME) return MessageType.CHOICE;
         if (update.message() != null && userStatus == BotState.WAIT_CHANGE_DAY) return MessageType.CHANGE_DAY;
         if (update.message() != null && userStatus == BotState.END) return MessageType.END;
-        if (update.message() != null || userStatus == BotState.DAY_RECEIVED) return MessageType.MESSAGE;
+        if (update.message() != null && userStatus == BotState.DAY_RECEIVED) return MessageType.MESSAGE;
+        if (update.message() != null && userStatus == BotState.BUTTON_CORRECT) return MessageType.CORRECT;
         if (update.myChatMember() != null) return MessageType.CHAT_MEMBER;
         if (update.callbackQuery() != null) return MessageType.CALLBACK_QUERY;
         return MessageType.UNSUPPORTED;

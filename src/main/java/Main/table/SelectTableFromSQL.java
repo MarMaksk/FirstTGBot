@@ -1,5 +1,6 @@
 package Main.table;
 
+import Main.service.ServiceForButton;
 import com.pengrad.telegrambot.TelegramBot;
 
 import java.sql.*;
@@ -72,16 +73,17 @@ public class SelectTableFromSQL {
         return weekSchedule;
     }
 
-    public static void weekend(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day) throws SQLException {
+    public static List<String> weekend(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day) throws SQLException {
         List<String> ls0 = getOneTable(idUserMessage, stmt);
         ls0.removeAll(Collections.singleton(null));
         if (!ls0.isEmpty()) {
             ls.add(day);
             ls0.forEach(el -> ls.add(el));
         }
+        return ls0;
     }
 
-    public static void weekday(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day, String dayIsEmpty) throws SQLException {
+    public static List<String> weekday(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day, String dayIsEmpty) throws SQLException {
         List<String> ls0 = getOneTable(idUserMessage, stmt);
         ls0.removeAll(Collections.singleton(null));
         if (!ls0.isEmpty()) {
@@ -90,6 +92,7 @@ public class SelectTableFromSQL {
         } else {
             ls.add(dayIsEmpty);
         }
+        return ls0;
     }
 
     public static List<String> getOneTable(Long idUserMessage, PreparedStatement stmt) throws SQLException {
@@ -116,8 +119,15 @@ public class SelectTableFromSQL {
         return dayList;
     }
 
+    public static List<String> getListOfSchedule(Long userId) throws SQLException {
+        List<String> ls = new ArrayList<>();
+        String dayOfWeek = ServiceForButton.getDaysOfAWeek(0l);
+        getScheduleForDayOfWeek(userId, dayOfWeek, ls);
+        return ls;
+    }
 
-    public static String getScheduleForDayOfWeek(Long userId, String dayOfWeek) throws SQLException {
+
+    public static String getScheduleForDayOfWeek(Long userId, String dayOfWeek, List<String> ls) throws SQLException {
         PreparedStatement stmt = null;
         String weekSchedule = "";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
@@ -137,7 +147,6 @@ public class SelectTableFromSQL {
                 stmt = con.prepareStatement(SELECT_TABLE_SATURDAY);
             if (dayOfWeek.equals("воскресенье"))
                 stmt = con.prepareStatement(SELECT_TABLE_SUNDAY);
-            List<String> ls = new ArrayList<>();
             if (dayOfWeek.equals("суббота") || dayOfWeek.equals("воскресенье"))
                 SelectTableFromSQL.weekend(userId, stmt, ls, dayOfWeek);
             else

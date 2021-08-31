@@ -42,6 +42,7 @@ public class UpdateTableToSQL {
             try {
                 updateSchedule(userId, oneDay, con, stmt);
             } catch (SQLException ex) {
+                con.rollback();
                 resultUpdate = false;
                 ex.printStackTrace();
                 System.out.println("THAT'S NORMAL EXCEPTION");
