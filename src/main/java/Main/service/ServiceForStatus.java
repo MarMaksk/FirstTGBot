@@ -9,9 +9,9 @@ import com.pengrad.telegrambot.request.SendMessage;
 
 public class ServiceForStatus implements Service {
 
-    public static void buttonEndInDayChange(Update update, TelegramBot bot) {
+    public static void botStateEnd(Update update, TelegramBot bot) {
         ReplyKeyboardRemove rkr = new ReplyKeyboardRemove();
         bot.execute(new SendMessage(update.message().chat().id(), "Расписание добавлено. Вот оно:").replyMarkup(rkr));
-        SelectTableFromSQL.getScheduleAWeek(bot, update.message().from().id());
+        SelectTableFromSQL.getScheduleAWeek(update.message().from().id());
     }
 }

@@ -2,7 +2,6 @@ package Main;
 
 import Main.ServiceSQL.DeleteScheduleFromSQL;
 import Main.ServiceSQL.TablenameSQL;
-import Main.ServiceSQL.UpdateTableToSQL;
 import Main.service.ServiceForButton;
 import Main.service.ServiceForDay;
 import Main.service.ServiceForStatus;
@@ -14,6 +13,7 @@ import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class Runner {
                                         return;
                                     case CHANGE_TABLE:
                                         ServicePreparationForSQL.preparationDayForWriting(update, idUserMessage, user, bot);
-                                        UpdateTableToSQL.preparationDayForUpdate(bot, user, update.message().text().toLowerCase(), idUserMessage);
+                                        ServicePreparationForSQL.preparationDayForUpdate(bot, user, update.message().text().toLowerCase(), idUserMessage);
                                         return;
                                     case CHOICE:
                                         ServiceForButton.buttonChoice(update, user, bot);
@@ -107,7 +107,7 @@ public class Runner {
                                     case CALLBACK_QUERY:
                                         return;
                                     case END:
-                                        ServiceForStatus.buttonEndInDayChange(update, bot);
+                                        ServiceForStatus.botStateEnd(update, bot);
                                         return;
                                     default:
                                         throw new IllegalStateException("Unexpected value: " + messageType(update));
@@ -126,7 +126,8 @@ public class Runner {
         if (user.getUsersCurrentBotState(userId) == BotState.BUTTON_DELETE) {
             DeleteScheduleFromSQL.removeSchedule(userId, update.message().text());
             user.setUsersCurrentBotState(userId, BotState.WAIT_STATUS);
-            bot.execute(new SendMessage(userId, "Расписание удалено успешно"));
+            ReplyKeyboardRemove rkr = new ReplyKeyboardRemove();
+            bot.execute(new SendMessage(userId, "Расписание удалено успешно").replyMarkup(rkr));
         } else
             user.setUsersCurrentBotState(userId, BotState.BUTTON_DELETE);
     }

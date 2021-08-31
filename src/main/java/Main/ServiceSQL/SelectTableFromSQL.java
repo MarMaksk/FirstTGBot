@@ -1,7 +1,6 @@
 package Main.ServiceSQL;
 
 import Main.service.ServiceForButton;
-import com.pengrad.telegrambot.TelegramBot;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -31,20 +30,20 @@ public class SelectTableFromSQL {
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
                 "postgres",
                 "596228")) {
-            getDayFromTable(idUserMessage, dayList, con);
+            getDayFromTable(idUserMessage, con);
         } catch (SQLException throwables) {         //TODO сделать работу с днями
             throwables.printStackTrace();
         }
         return dayList;
     }
 
-    private static void getDayFromTable(Long idUserMessage, List<String> dayList, Connection con) throws SQLException {
+    private static void getDayFromTable(Long idUserMessage, Connection con) throws SQLException {
         PreparedStatement stmt = con.prepareStatement(SELECT_TABLE_MONDAY);
         getOneTable(idUserMessage, stmt);
     }
 
 
-    public static String getScheduleAWeek(TelegramBot bot, Long idUserMessage) {
+    public static String getScheduleAWeek(Long idUserMessage) {
         String weekSchedule = "";
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
                 "postgres",
@@ -57,13 +56,13 @@ public class SelectTableFromSQL {
             PreparedStatement stmt5 = con.prepareStatement(SELECT_TABLE_SATURDAY);
             PreparedStatement stmt6 = con.prepareStatement(SELECT_TABLE_SUNDAY);
             List<String> ls = new LinkedList<>();
-            weekday(idUserMessage, stmt0, ls, "Понедельник", "Расписание на понедельник отсутсвует");
-            weekday(idUserMessage, stmt1, ls, "Вторник", "Расписание на вторник отсутсвует");
-            weekday(idUserMessage, stmt2, ls, "Среда", "Расписание на среду отсутсвует");
-            weekday(idUserMessage, stmt3, ls, "Четверг", "Расписание на четверг отсутсвует");
-            weekday(idUserMessage, stmt4, ls, "Пятница", "Расписание на пятницу отсутсвует");
-            weekend(idUserMessage, stmt5, ls, "Суббота");
-            weekend(idUserMessage, stmt6, ls, "Воскресенье");
+            ReceivingDays.weekday(idUserMessage, stmt0, ls, "Понедельник", "Расписание на понедельник отсутсвует");
+            ReceivingDays.weekday(idUserMessage, stmt1, ls, "Вторник", "Расписание на вторник отсутсвует");
+            ReceivingDays.weekday(idUserMessage, stmt2, ls, "Среда", "Расписание на среду отсутсвует");
+            ReceivingDays.weekday(idUserMessage, stmt3, ls, "Четверг", "Расписание на четверг отсутсвует");
+            ReceivingDays.weekday(idUserMessage, stmt4, ls, "Пятница", "Расписание на пятницу отсутсвует");
+            ReceivingDays.weekend(idUserMessage, stmt5, ls, "Суббота");
+            ReceivingDays.weekend(idUserMessage, stmt6, ls, "Воскресенье");
             for (String list : ls) {
                 weekSchedule += list + "\n";
             }
@@ -73,26 +72,28 @@ public class SelectTableFromSQL {
         return weekSchedule;
     }
 
-    public static List<String> weekend(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day) throws SQLException {
-        List<String> ls0 = getOneTable(idUserMessage, stmt);
-        ls0.removeAll(Collections.singleton(null));
-        if (!ls0.isEmpty()) {
-            ls.add(day);
-            ls0.forEach(el -> ls.add(el));
+    private static class ReceivingDays {
+        public static List<String> weekend(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day) throws SQLException {
+            List<String> ls0 = getOneTable(idUserMessage, stmt);
+            ls0.removeAll(Collections.singleton(null));
+            if (!ls0.isEmpty()) {
+                ls.add(day);
+                ls0.forEach(el -> ls.add(el));
+            }
+            return ls0;
         }
-        return ls0;
-    }
 
-    public static List<String> weekday(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day, String dayIsEmpty) throws SQLException {
-        List<String> ls0 = getOneTable(idUserMessage, stmt);
-        ls0.removeAll(Collections.singleton(null));
-        if (!ls0.isEmpty()) {
-            ls.add(day);
-            ls0.forEach(el -> ls.add(el));
-        } else {
-            ls.add(dayIsEmpty);
+        public static List<String> weekday(Long idUserMessage, PreparedStatement stmt, List<String> ls, String day, String dayIsEmpty) throws SQLException {
+            List<String> ls0 = getOneTable(idUserMessage, stmt);
+            ls0.removeAll(Collections.singleton(null));
+            if (!ls0.isEmpty()) {
+                ls.add(day);
+                ls0.forEach(el -> ls.add(el));
+            } else {
+                ls.add(dayIsEmpty);
+            }
+            return ls0;
         }
-        return ls0;
     }
 
     public static List<String> getOneTable(Long idUserMessage, PreparedStatement stmt) throws SQLException {
@@ -148,9 +149,9 @@ public class SelectTableFromSQL {
             if (dayOfWeek.equals("воскресенье"))
                 stmt = con.prepareStatement(SELECT_TABLE_SUNDAY);
             if (dayOfWeek.equals("суббота") || dayOfWeek.equals("воскресенье"))
-                SelectTableFromSQL.weekend(userId, stmt, ls, dayOfWeek);
+                ReceivingDays.weekend(userId, stmt, ls, dayOfWeek);
             else
-                SelectTableFromSQL.weekday(userId, stmt, ls, dayOfWeek, dayOfWeek + " отдыхаем");
+                ReceivingDays.weekday(userId, stmt, ls, dayOfWeek, dayOfWeek + " отдыхаем");
             for (String list : ls) {
                 weekSchedule += list + "\n";
             }

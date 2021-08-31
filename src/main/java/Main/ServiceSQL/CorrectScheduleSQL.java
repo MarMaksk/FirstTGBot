@@ -19,7 +19,6 @@ public class CorrectScheduleSQL {
                 "postgres",
                 "596228")) {
             con.setAutoCommit(false);
-            boolean resultInput = true;
             PreparedStatement stmt = con.prepareStatement(INSERT_CORRECT_SCHEDULE);
             try {
                 stmt.setLong(1, userId);
@@ -43,18 +42,6 @@ public class CorrectScheduleSQL {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
-//            if (!resultInput) {
-//                try {
-//                    stmt = con.prepareStatement(UPDATE_CORRECT_SCHEDULE);
-//                    for (int i = 0; i < correct.size(); i++)
-//                        stmt.setString(i + 1, correct.get(i));
-//                    stmt.setLong(7, userId);
-//                    stmt.executeUpdate();
-//                    con.commit();
-//                } catch (SQLException ex) {
-//                    con.rollback();
-//                }
     }
 
 
@@ -77,7 +64,6 @@ public class CorrectScheduleSQL {
                         correct.add(5, rs.getString("tb_time_change_fourth_pair"));
                     } catch (NullPointerException ex) {
                         correct.removeAll(Collections.singleton(null));
-                        //correct.add("");
                         return correct;
                     }
                 }

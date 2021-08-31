@@ -27,7 +27,7 @@ public class ServiceForButton implements Service {
     }
 
     public static void buttonAWeek(Long userId, TelegramBot bot) {
-        String weekSchedule = SelectTableFromSQL.getScheduleAWeek(bot, userId);
+        String weekSchedule = SelectTableFromSQL.getScheduleAWeek(userId);
         bot.execute(new SendMessage(userId, weekSchedule));
     }
 
@@ -37,10 +37,13 @@ public class ServiceForButton implements Service {
     }
 
     public static void buttonChoice(Update update, TelegramUser user, TelegramBot bot) {
-        //TODO полученние названий из SQL
         if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE ||
                 user.getUsersCurrentBotState(update.message().chat().id()) == BotState.BUTTON_DELETE) {
             List<String> listTablename = TablenameSQL.getExistingTablename(update.message().chat().id());
+            if (listTablename.isEmpty()){
+                bot.execute(new SendMessage(update.message().chat().id(), "Для начала нужно добавить расписание"));
+                return;
+            }
             KeyboardButton[] keyboardButtons = new KeyboardButton[listTablename.size()];
             for (int i = 0; i < keyboardButtons.length; i++) {
                 keyboardButtons[i] = new KeyboardButton(listTablename.get(i));
@@ -62,7 +65,7 @@ public class ServiceForButton implements Service {
     }
 
     public static void buttonToday(TelegramBot bot, Long userId) {
-        String res = sentToUserDay(bot, userId, 0l);
+        sentToUserDay(bot, userId, 0l);
     }
 
     private static String sentToUserDay(TelegramBot bot, Long userId, Long day) {
@@ -307,7 +310,6 @@ public class ServiceForButton implements Service {
                 scheduleTime.get(userId).add(text);
                 correctStep.remove(userId);
                 CorrectScheduleSQL.InsertUpdateCorrectSchedule(userId, scheduleTime.get(userId));
-                //TODO WRITE TO SQL
                 scheduleTime.get(userId).forEach(System.out::println);
                 scheduleTime.remove(userId);
                 user.setUsersCurrentBotState(userId, BotState.WAIT_STATUS);

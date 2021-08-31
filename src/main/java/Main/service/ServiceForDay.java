@@ -81,7 +81,7 @@ public class ServiceForDay implements Service {
                 user.setUsersCurrentDayState(userID, DayState.WAIT_STATUS);
                 user.setUsersCurrentBotState(userID, BotState.WAIT_STATUS);
                 daysButton.remove(userID);
-                ServiceForStatus.buttonEndInDayChange(update, bot);
+                ServiceForStatus.botStateEnd(update, bot);
                 return;
             }
             if (user.getUsersCurrentBotState(userID) == BotState.WAIT_CHANGE_DAY) {
