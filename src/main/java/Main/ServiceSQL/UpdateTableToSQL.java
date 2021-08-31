@@ -31,7 +31,7 @@ public class UpdateTableToSQL {
     private static final String UPDATE_SUNDAY = "UPDATE tb_sunday\\n\" +\n" +
             "            \"\\tSET tb_user_id=?, tb_one=?, tb_two=?, tb_three=?, tb_four=?, tb_five=?, tb_six=?, tb_seven=?, tb_eight=?, tb_nine=?, tb_public=? WHERE tb_name = ?";
 
-    public static void setDay(TelegramBot bot, Update update, TelegramUser user, List<String> oneDay) {
+    public static void updateDay(TelegramBot bot, Update update, TelegramUser user, List<String> oneDay) {
         try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
                 "postgres",
                 "596228")) {

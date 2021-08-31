@@ -1,5 +1,6 @@
 package Main;
 
+import Main.ServiceSQL.DeleteScheduleFromSQL;
 import Main.ServiceSQL.TablenameSQL;
 import Main.ServiceSQL.UpdateTableToSQL;
 import Main.service.ServiceForButton;
@@ -90,6 +91,13 @@ public class Runner {
                                     case CORRECT:
                                         ServiceForButton.Correct.buttonCorrect(update, bot, user, idUserMessage);
                                         return;
+                                    case DELETE:
+                                        buttonDelete(bot, update, user, idUserMessage);
+                                        ServiceForButton.buttonChoice(update, user, bot);
+                                        return;
+                                    case DELETE_TWO:
+                                        buttonDelete(bot, update, user, idUserMessage);
+                                        return;
                                     case CHANGE_DAY:
                                         ServiceForDay.changeDay(update, update.message().text(), user, bot);
                                         return;
@@ -112,6 +120,15 @@ public class Runner {
 
 
         });
+    }
+
+    public static void buttonDelete(TelegramBot bot, Update update, TelegramUser user, Long userId) {
+        if (user.getUsersCurrentBotState(userId) == BotState.BUTTON_DELETE) {
+            DeleteScheduleFromSQL.removeSchedule(userId, update.message().text());
+            user.setUsersCurrentBotState(userId, BotState.WAIT_STATUS);
+            bot.execute(new SendMessage(userId, "Расписание удалено успешно"));
+        } else
+            user.setUsersCurrentBotState(userId, BotState.BUTTON_DELETE);
     }
 
     //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
@@ -140,6 +157,8 @@ public class Runner {
         if (update.message() != null && text.equals("/change")) return MessageType.CHANGE;
         if (update.message() != null && text.equals("/choice")) return MessageType.CHOICE;
         if (update.message() != null && text.equals("/correct")) return MessageType.CORRECT;
+        if (update.message() != null && text.equals("/delete")) return MessageType.DELETE;
+        if (update.message() != null && userStatus == BotState.BUTTON_DELETE) return MessageType.DELETE_TWO;
         if (update.message() != null && userStatus == BotState.BUTTON_CHANGE) return MessageType.CHANGE_TABLE;
         if (update.message() != null && userStatus == BotState.CHANGE_SCHEDULE) return MessageType.CHANGE_TABLE;
         if (update.message() != null && userStatus == BotState.BUTTON_CHOICE) return MessageType.CHOICE_TABLENAME;

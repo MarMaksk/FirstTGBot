@@ -18,6 +18,8 @@ public enum MessageType {
     CHOICE,
     CHOICE_TABLENAME,
     CHANGE_TABLE,
+    DELETE,
+    DELETE_TWO,
     END,
     CORRECT
 

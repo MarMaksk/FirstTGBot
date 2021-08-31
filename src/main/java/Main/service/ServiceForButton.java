@@ -38,7 +38,8 @@ public class ServiceForButton implements Service {
 
     public static void buttonChoice(Update update, TelegramUser user, TelegramBot bot) {
         //TODO полученние названий из SQL
-        if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE) {
+        if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_CHOICE ||
+                user.getUsersCurrentBotState(update.message().chat().id()) == BotState.BUTTON_DELETE) {
             List<String> listTablename = TablenameSQL.getExistingTablename(update.message().chat().id());
             KeyboardButton[] keyboardButtons = new KeyboardButton[listTablename.size()];
             for (int i = 0; i < keyboardButtons.length; i++) {
@@ -50,7 +51,8 @@ public class ServiceForButton implements Service {
             }
             replyKeyboardMarkup.resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
             bot.execute(new SendMessage(update.message().chat().id(), "Выбери расписание из доступных").replyMarkup(replyKeyboardMarkup));
-            user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
+            if (user.getUsersCurrentBotState(update.message().chat().id()) != BotState.BUTTON_DELETE)
+                user.setUsersCurrentBotState(update.message().chat().id(), BotState.BUTTON_CHOICE);
         }
         return;
     }

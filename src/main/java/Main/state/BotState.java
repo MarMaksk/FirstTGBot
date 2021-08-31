@@ -9,6 +9,7 @@ public enum BotState {
     BUTTON_CHANGE,
     CHANGE_SCHEDULE,
     BUTTON_CORRECT,
+    BUTTON_DELETE,
     SET_ACTUAL_TABLENAME,
     END
 }

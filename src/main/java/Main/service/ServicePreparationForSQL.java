@@ -32,7 +32,7 @@ public class ServicePreparationForSQL implements Service {
                         user.getUsersCurrentExtremeState(idUserMessage) != ExtremHelpEnum.EXTREME_PARAM_ONE)
                     InsertTableToSQL.createNewTable(idUserMessage, user, TableOfOneDay.getListOfOneDay(idUserMessage), null);
                 else
-                    UpdateTableToSQL.setDay(bot, update, user, TableOfOneDay.getListOfOneDay(idUserMessage));
+                    UpdateTableToSQL.updateDay(bot, update, user, TableOfOneDay.getListOfOneDay(idUserMessage));
                 user.setUsersCurrentBotState(idUserMessage, BotState.WAIT_CHANGE_DAY);
                 ServiceForDay.selectionDay(idUserMessage, user, bot);
                 TableOfOneDay.removeUserList(idUserMessage);
@@ -46,9 +46,5 @@ public class ServicePreparationForSQL implements Service {
                 return;
             }
         }
-    }
-
-    public static void preparationForReading(Update update, Long idUserMessage, TelegramUser user, TelegramBot bot) {
-
     }
 }
