@@ -1,7 +1,5 @@
 package Main.service;
 
-import Main.ServiceSQL.InsertTableToSQL;
-import Main.ServiceSQL.UpdateTableToSQL;
 import Main.state.BotState;
 import Main.state.DayState;
 import Main.state.ExtremHelpEnum;
@@ -11,6 +9,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
+import main.InsertTableToSQL;
+import main.UpdateTableToSQL;
 
 import java.util.HashMap;
 import java.util.Map;

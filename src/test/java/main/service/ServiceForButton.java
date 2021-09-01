@@ -1,8 +1,5 @@
 package Main.service;
 
-import Main.ServiceSQL.CorrectScheduleSQL;
-import Main.ServiceSQL.SelectTableFromSQL;
-import Main.ServiceSQL.TablenameSQL;
 import Main.state.BotState;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
@@ -10,6 +7,9 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import main.CorrectScheduleSQL;
+import main.SelectTableFromSQL;
+import main.TablenameSQL;
 
 import java.sql.SQLException;
 import java.time.DayOfWeek;

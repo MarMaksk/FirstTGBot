@@ -1,4 +1,4 @@
-package Main.ServiceSQL;
+package main;
 
 import Main.config.Config;
 

@@ -1,7 +1,5 @@
-package Main;
+package main;
 
-import Main.ServiceSQL.DeleteScheduleFromSQL;
-import Main.ServiceSQL.TablenameSQL;
 import Main.service.ServiceForButton;
 import Main.service.ServiceForDay;
 import Main.service.ServiceForStatus;

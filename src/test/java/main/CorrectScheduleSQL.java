@@ -1,4 +1,4 @@
-package Main.ServiceSQL;
+package main;
 
 import java.sql.*;
 import java.util.ArrayList;
