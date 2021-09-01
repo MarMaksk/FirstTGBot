@@ -2,7 +2,6 @@ package Main;
 
 import com.pengrad.telegrambot.TelegramBot;
 
-
 import java.util.logging.Logger;
 
 public class Bot {
