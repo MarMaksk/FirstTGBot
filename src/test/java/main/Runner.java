@@ -13,6 +13,8 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
+import main.ServiceSQL.DeleteScheduleFromSQL;
+import main.ServiceSQL.TablenameSQL;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -32,7 +34,10 @@ public class Runner {
             public int process(List<Update> lst) {
                 lst.forEach(update -> {
                             new Thread(() -> {
-
+                                if (update.message().text()==null){
+                                    bot.execute(new SendMessage(update.message().from().id(),"Бот читает только символы, буквы и цифры"));
+                                    return;
+                                }
                                 BotState stateUserCallbackQuery = null;
                                 BotState stateUserMessage = null;
                                 Long idUserCallbackQuery = null;

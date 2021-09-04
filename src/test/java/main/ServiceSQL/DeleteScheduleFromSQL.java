@@ -1,11 +1,11 @@
-package main;
+package main.ServiceSQL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class DeleteScheduleFromSQL {
+public class DeleteScheduleFromSQL extends OperationSQL {
     private static final String DELETE_SCHEDULE_FROM_USER_LIST = "DELETE FROM tb_users_tablename" +
             " WHERE tb_tablename = ?;";
     private static final String DELETE_SCHEDULE_FROM_TB_MONDAY = "DELETE FROM tb_monday" +
@@ -24,9 +24,7 @@ public class DeleteScheduleFromSQL {
             " WHERE tb_name = ?;";
 
     public static void removeSchedule(Long userId, String tablename) {
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
-                "postgres",
-                "596228")) {
+        try (Connection con = DriverManager.getConnection(urlSQL, loginSQL, passwordSQL)) {
             PreparedStatement stmt = con.prepareStatement(DELETE_SCHEDULE_FROM_USER_LIST);
             stmt.setString(1, userId + tablename);
             stmt.executeUpdate();

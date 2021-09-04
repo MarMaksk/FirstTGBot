@@ -9,8 +9,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
-import main.InsertTableToSQL;
-import main.UpdateTableToSQL;
+import main.ServiceSQL.InsertTableToSQL;
+import main.ServiceSQL.UpdateTableToSQL;
 
 import java.util.HashMap;
 import java.util.Map;

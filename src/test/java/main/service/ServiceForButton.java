@@ -7,9 +7,9 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import main.CorrectScheduleSQL;
-import main.SelectTableFromSQL;
-import main.TablenameSQL;
+import main.ServiceSQL.CorrectScheduleSQL;
+import main.ServiceSQL.SelectTableFromSQL;
+import main.ServiceSQL.TablenameSQL;
 
 import java.sql.SQLException;
 import java.time.DayOfWeek;

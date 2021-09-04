@@ -1,4 +1,4 @@
-package main;
+package main.ServiceSQL;
 
 import Main.state.DayState;
 import Main.state.ExtremHelpEnum;
@@ -13,7 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class UpdateTableToSQL {
+public class UpdateTableToSQL extends OperationSQL {
     private static final String UPDATE_MONDAY = "UPDATE tb_monday\n" +
             "\tSET tb_one=?, tb_two=?, tb_three=?, tb_four=?, tb_five=?, tb_six=?, tb_seven=?, tb_eight=?, tb_nine=?, tb_public=? WHERE tb_user_id = ? AND tb_name = ?";
     private static final String UPDATE_TUESDAY = "UPDATE tb_tuesday " +
@@ -30,9 +30,7 @@ public class UpdateTableToSQL {
             "            \"\\tSET tb_user_id=?, tb_one=?, tb_two=?, tb_three=?, tb_four=?, tb_five=?, tb_six=?, tb_seven=?, tb_eight=?, tb_nine=?, tb_public=? WHERE tb_name = ?";
 
     public static void updateDay(TelegramBot bot, Update update, TelegramUser user, List<String> oneDay) {
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
-                "postgres",
-                "596228")) {
+        try (Connection con = DriverManager.getConnection(urlSQL, loginSQL, passwordSQL)) {
             con.setAutoCommit(false);
             boolean resultUpdate = true;
             Long userId = update.message().from().id();

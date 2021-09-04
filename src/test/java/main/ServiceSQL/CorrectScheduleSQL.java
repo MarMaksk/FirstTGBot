@@ -1,11 +1,11 @@
-package main;
+package main.ServiceSQL;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CorrectScheduleSQL {
+public class CorrectScheduleSQL extends OperationSQL {
     private final static String INSERT_CORRECT_SCHEDULE = "INSERT INTO tb_user_schedule_time(\n" +
             "\ttb_user_id, tb_pair_length, tb_time_start, tb_time_lunch, tb_lunch_after, tb_time_change, tb_time_change_fourth_pair)\n" +
             "\tVALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -15,9 +15,7 @@ public class CorrectScheduleSQL {
             "\tFROM tb_user_schedule_time WHERE tb_user_id = ?;";
 
     public static void InsertUpdateCorrectSchedule(Long userId, List<String> correct) {
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
-                "postgres",
-                "596228")) {
+        try (Connection con = DriverManager.getConnection(urlSQL, loginSQL, passwordSQL)) {
             con.setAutoCommit(false);
             PreparedStatement stmt = con.prepareStatement(INSERT_CORRECT_SCHEDULE);
             try {

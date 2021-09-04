@@ -1,4 +1,4 @@
-package main;
+package main.ServiceSQL;
 
 
 import Main.state.DayState;
@@ -40,9 +40,7 @@ public class InsertTableToSQL extends OperationSQL {
 //        "596228")
 // TODO: 26.08.2021
     public static void createNewTable(Long idUserMessage, TelegramUser user, List<String> oneDay, PreparedStatement stmt) {
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
-                "postgres",
-                "596228")) {
+        try (Connection con = DriverManager.getConnection(urlSQL, loginSQL, passwordSQL)) {
             if (stmt == null)
                 stmt = getPreparedStatement(idUserMessage, user, con);
             con.setAutoCommit(false);

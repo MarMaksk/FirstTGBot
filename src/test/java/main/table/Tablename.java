@@ -5,7 +5,7 @@ import Main.state.BotState;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
-import main.TablenameSQL;
+import main.ServiceSQL.TablenameSQL;
 
 public class Tablename {
     public static void addTimetableName(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {

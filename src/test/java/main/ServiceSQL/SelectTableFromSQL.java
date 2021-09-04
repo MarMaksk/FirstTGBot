@@ -1,4 +1,4 @@
-package main;
+package main.ServiceSQL;
 
 import Main.service.ServiceForButton;
 
@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SelectTableFromSQL {
+public class SelectTableFromSQL extends OperationSQL {
 
     private static final String SELECT_TABLE_MONDAY = "SELECT tb_one, tb_two, tb_three, tb_four, tb_five, tb_six, tb_seven, tb_eight, tb_nine\n" +
             "\tFROM tb_monday WHERE tb_user_id = ? AND tb_name = ?";
@@ -27,9 +27,7 @@ public class SelectTableFromSQL {
 
     public static List<String> getTableOfOneDay(Long idUserMessage) {
         List<String> dayList = new ArrayList<>();
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
-                "postgres",
-                "596228")) {
+        try (Connection con = DriverManager.getConnection(urlSQL, loginSQL, passwordSQL)) {
             getDayFromTable(idUserMessage, con);
         } catch (SQLException throwables) {         //TODO сделать работу с днями
             throwables.printStackTrace();

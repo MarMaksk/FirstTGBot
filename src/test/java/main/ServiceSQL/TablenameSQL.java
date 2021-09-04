@@ -1,4 +1,4 @@
-package main;
+package main.ServiceSQL;
 
 import Main.state.BotState;
 import Main.user.TelegramUser;
@@ -26,9 +26,7 @@ public class TablenameSQL extends OperationSQL {
 
     public static String getActualTablename(Long userId) {
         String tablename = null;
-        try (Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/telegram_bot",
-                "postgres",
-                "596228")) {
+        try (Connection con = DriverManager.getConnection(urlSQL, loginSQL, passwordSQL)) {
             PreparedStatement stmt = con.prepareStatement(SELECT_ACTUAL_TABLENAME);
             stmt.setLong(1, userId);
             ResultSet rs = stmt.executeQuery();
