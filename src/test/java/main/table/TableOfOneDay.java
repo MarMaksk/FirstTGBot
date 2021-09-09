@@ -1,4 +1,4 @@
-package Main.table;
+package main.table;
 
 import java.util.HashMap;
 import java.util.LinkedList;

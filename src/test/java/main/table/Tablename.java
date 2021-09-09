@@ -1,11 +1,11 @@
-package Main.table;
+package main.table;
 
-import Main.service.ServiceForDay;
 import Main.state.BotState;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import main.ServiceSQL.TablenameSQL;
+import main.service.ServiceForDay;
 
 public class Tablename {
     public static void addTimetableName(Update update, Long idMessage, TelegramUser user, TelegramBot bot) {

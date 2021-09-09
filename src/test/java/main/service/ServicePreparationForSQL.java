@@ -1,9 +1,8 @@
-package Main.service;
+package main.service;
 
 import Main.state.BotState;
 import Main.state.DayState;
 import Main.state.ExtremHelpEnum;
-import Main.table.TableOfOneDay;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -11,6 +10,7 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 import main.ServiceSQL.InsertTableToSQL;
 import main.ServiceSQL.UpdateTableToSQL;
+import main.table.TableOfOneDay;
 
 import java.util.HashMap;
 import java.util.Map;

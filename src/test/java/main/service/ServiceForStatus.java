@@ -1,4 +1,4 @@
-package Main.service;
+package main.service;
 
 
 import com.pengrad.telegrambot.TelegramBot;

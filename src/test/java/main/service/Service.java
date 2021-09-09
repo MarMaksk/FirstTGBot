@@ -1,4 +1,4 @@
-package Main.service;
+package main.service;
 
 public interface Service {
 }

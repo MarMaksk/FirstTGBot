@@ -1,4 +1,4 @@
-package Main.service;
+package main.service;
 
 import Main.state.BotState;
 import Main.user.TelegramUser;

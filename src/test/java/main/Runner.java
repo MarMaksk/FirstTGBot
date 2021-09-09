@@ -1,9 +1,5 @@
 package main;
 
-import Main.service.ServiceForButton;
-import Main.service.ServiceForDay;
-import Main.service.ServiceForStatus;
-import Main.service.ServicePreparationForSQL;
 import Main.state.BotState;
 import Main.state.MessageType;
 import Main.table.Tablename;
@@ -15,6 +11,10 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 import main.ServiceSQL.DeleteScheduleFromSQL;
 import main.ServiceSQL.TablenameSQL;
+import main.service.ServiceForButton;
+import main.service.ServiceForDay;
+import main.service.ServiceForStatus;
+import main.service.ServicePreparationForSQL;
 
 import java.util.List;
 import java.util.logging.Logger;

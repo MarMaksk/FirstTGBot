@@ -1,6 +1,6 @@
 package main.ServiceSQL;
 
-import Main.service.ServiceForButton;
+import main.service.ServiceForButton;
 
 import java.sql.*;
 import java.util.ArrayList;
