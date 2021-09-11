@@ -76,7 +76,7 @@ public class SelectTableFromSQL extends OperationSQL {
             ls0.removeAll(Collections.singleton(null));
             if (!ls0.isEmpty()) {
                 ls.add(day);
-                ls0.forEach(el -> ls.add(el));
+                ls0.forEach(ls::add);
             }
             return ls0;
         }
@@ -86,7 +86,7 @@ public class SelectTableFromSQL extends OperationSQL {
             ls0.removeAll(Collections.singleton(null));
             if (!ls0.isEmpty()) {
                 ls.add(day);
-                ls0.forEach(el -> ls.add(el));
+                ls0.forEach(ls::add);
             } else {
                 ls.add(dayIsEmpty);
             }

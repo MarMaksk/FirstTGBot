@@ -24,7 +24,7 @@ public class ServiceForDay implements Service {
                 || user.getUsersCurrentBotState(idMessage) == BotState.BUTTON_CHANGE) {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup("")
                     .resizeKeyboard(false).selective(true).oneTimeKeyboard(true);
-            daysButton.get(idMessage).forEach(el -> replyKeyboardMarkup.addRow(el));
+            daysButton.get(idMessage).forEach(replyKeyboardMarkup::addRow);
             replyKeyboardMarkup.addRow("Завершить");
             bot.execute(new SendMessage(idMessage, "С каким днём будем работать?").replyMarkup(replyKeyboardMarkup));
         }

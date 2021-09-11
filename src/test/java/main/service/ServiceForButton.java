@@ -6,8 +6,10 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 import main.ServiceSQL.CorrectScheduleSQL;
+import main.ServiceSQL.DeleteScheduleFromSQL;
 import main.ServiceSQL.SelectTableFromSQL;
 import main.ServiceSQL.TablenameSQL;
 
@@ -35,6 +37,16 @@ public class ServiceForButton implements Service {
     public static void buttonChange(TelegramBot bot, TelegramUser user, Long userId) {
         user.setUsersCurrentBotState(userId, BotState.BUTTON_CHANGE);
         ServiceForDay.selectionDay(userId, user, bot);
+    }
+
+    public static void buttonDelete(TelegramBot bot, Update update, TelegramUser user, Long userId) {
+        if (user.getUsersCurrentBotState(userId) == BotState.BUTTON_DELETE) {
+            DeleteScheduleFromSQL.removeSchedule(userId, update.message().text());
+            user.setUsersCurrentBotState(userId, BotState.WAIT_STATUS);
+            ReplyKeyboardRemove rkr = new ReplyKeyboardRemove();
+            bot.execute(new SendMessage(userId, "Расписание удалено успешно").replyMarkup(rkr));
+        } else
+            user.setUsersCurrentBotState(userId, BotState.BUTTON_DELETE);
     }
 
     public static void buttonChoice(Update update, TelegramUser user, TelegramBot bot) {

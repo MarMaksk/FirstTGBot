@@ -2,19 +2,17 @@ package main;
 
 import Main.state.BotState;
 import Main.state.MessageType;
-import Main.table.Tablename;
 import Main.user.TelegramUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
-import main.ServiceSQL.DeleteScheduleFromSQL;
 import main.ServiceSQL.TablenameSQL;
 import main.service.ServiceForButton;
 import main.service.ServiceForDay;
 import main.service.ServiceForStatus;
 import main.service.ServicePreparationForSQL;
+import main.table.Tablename;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -38,16 +36,8 @@ public class Runner {
                                     bot.execute(new SendMessage(update.message().from().id(),"Бот читает только символы, буквы и цифры"));
                                     return;
                                 }
-                                BotState stateUserCallbackQuery = null;
-                                BotState stateUserMessage = null;
-                                Long idUserCallbackQuery = null;
                                 Long idUserMessage = null;
-                                if (update.callbackQuery() != null) {
-                                    stateUserCallbackQuery = user.getUsersCurrentBotState(update.callbackQuery().from().id());
-                                    idUserCallbackQuery = update.callbackQuery().from().id();
-                                }
                                 if (update.message() != null) {
-                                    stateUserMessage = user.getUsersCurrentBotState(update.message().from().id());
                                     idUserMessage = update.message().from().id();
                                 }
                                 switch (messageType(update)) {
@@ -95,11 +85,11 @@ public class Runner {
                                         ServiceForButton.Correct.buttonCorrect(update, bot, user, idUserMessage);
                                         return;
                                     case DELETE:
-                                        buttonDelete(bot, update, user, idUserMessage);
+                                        ServiceForButton.buttonDelete(bot, update, user, idUserMessage);
                                         ServiceForButton.buttonChoice(update, user, bot);
                                         return;
                                     case DELETE_TWO:
-                                        buttonDelete(bot, update, user, idUserMessage);
+                                        ServiceForButton.buttonDelete(bot, update, user, idUserMessage);
                                         return;
                                     case CHANGE_DAY:
                                         ServiceForDay.changeDay(update, update.message().text(), user, bot);
@@ -125,15 +115,6 @@ public class Runner {
         });
     }
 
-    public static void buttonDelete(TelegramBot bot, Update update, TelegramUser user, Long userId) {
-        if (user.getUsersCurrentBotState(userId) == BotState.BUTTON_DELETE) {
-            DeleteScheduleFromSQL.removeSchedule(userId, update.message().text());
-            user.setUsersCurrentBotState(userId, BotState.WAIT_STATUS);
-            ReplyKeyboardRemove rkr = new ReplyKeyboardRemove();
-            bot.execute(new SendMessage(userId, "Расписание удалено успешно").replyMarkup(rkr));
-        } else
-            user.setUsersCurrentBotState(userId, BotState.BUTTON_DELETE);
-    }
 
     //TODO Удалять ли клавиатуру везде? Сделать ли отдельный класс для хранения ключа бота? (что я имел ввиду?)
 
